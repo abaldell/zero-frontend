@@ -1,13 +1,16 @@
 
+import { getApiExecutions } from '../utils/Utils';
 import { api } from './api';
+
+const urlApi = getApiExecutions();
 
 export const executionService = {
   getAll() {
-    return api.get('/executions');
+    return api.get(urlApi);
   },
 
   getById(id: string) {
-    return api.get(`/executions/${id}`);
+    return api.get(`${urlApi}/${id}`);
   },
 
   run(data: {
@@ -15,7 +18,7 @@ export const executionService = {
     selectedScriptKeys: string[];
   }) {
     return api.post(
-      '/executions/run',
+      `${urlApi}/run`,
       data
     );
   },

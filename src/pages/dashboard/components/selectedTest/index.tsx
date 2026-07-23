@@ -4,16 +4,17 @@ import { ActionsSelectedTest } from "./ActionsSelectedTest";
 import type { ScriptSet, TestFileNode } from "../../../../types/playwright";
 import { TestFieldList } from "./TestFieldList";
 import { TestScriptsList } from "./TestScriptsList";
+import { getApiTestSuite } from "../../../../utils/Utils";
 
-const API_SUITES = "http://localhost:3001/api/test-suite";
+const API_SUITES = getApiTestSuite();
 
 interface SelectTestsProps {
   isLoading: boolean;
   onOpenDrawer: (open: boolean) => void;
   onRun: () => void;
   onError: (error: string | null) => void;
-  onSelectPath?: (path: string[]) => void;
-  onSelectScript?: (script: string[]) => void;
+  onSelectPath: (path: string[]) => void;
+  onSelectScript: (script: string[]) => void;
 }
 export const SelectTests = (props: SelectTestsProps) => {
   const {
@@ -58,7 +59,7 @@ export const SelectTests = (props: SelectTestsProps) => {
       const newScript = current.includes(key)
         ? current.filter((item) => item !== key)
         : [...current, key];
-      onSelectScript?.(newScript);
+      onSelectScript(newScript);
       return newScript;
     });
   };
@@ -68,7 +69,8 @@ export const SelectTests = (props: SelectTestsProps) => {
       const newPaths = current.includes(path)
         ? current.filter((item) => item !== path)
         : [...current, path];
-      onSelectPath?.(newPaths);
+      debugger;
+      onSelectPath(newPaths);
       return newPaths;
     });
   };

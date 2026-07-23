@@ -11,3 +11,23 @@ export const today = () =>{
     minute: "2-digit",
   });
 }
+
+export const getApiEvents = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_EVENTS}`
+}
+
+export const getApiExecutions = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_EXECUTIONS}`
+}
+
+export const getApiTestSuite = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_TESTSUITE}`
+}
+
+export const getApiResults = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_RESULTS}`
+}
+
+export const getApiFiles = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_FILES}`
+}

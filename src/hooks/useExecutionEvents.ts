@@ -1,16 +1,18 @@
 
 import { useEffect } from 'react';
+import { getApiEvents } from '../utils/Utils';
 
 interface Props {
   onMessage: (data: any) => void;
 }
+const urlApi = getApiEvents();
 
 export function useExecutionEvents(
   props: Props
 ) {
   useEffect(() => {
     const source = new EventSource(
-      'http://localhost:3001/api/events/live'
+      `${urlApi}/live`
     );
 
     source.onmessage = event => {

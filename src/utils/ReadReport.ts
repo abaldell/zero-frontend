@@ -1,10 +1,11 @@
 
 import type { ReporterStep, TestStepNode } from "../types/reporterTest.type";
 import type { TestResult } from "../types/test.type";
+import { getApiFiles, getApiResults } from "./Utils";
 
 
 export async function loadPlaywrightResults() {
-    const results = await fetch('http://localhost:3001/api/results');
+    const results = await fetch(getApiResults());
     const data = await results.json();
     return data;
 }
@@ -44,7 +45,7 @@ export function getAttachmentUrl(filePath: string) {
         .substring(idx)
         .replace(/\\/g, '/');
 
-    return `http://localhost:3001/api/files/${relativePath}`;
+    return `${getApiFiles()}/${relativePath}`;
 }
 
 

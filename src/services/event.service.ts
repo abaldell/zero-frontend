@@ -1,10 +1,11 @@
+import { getApiEvents } from "../utils/Utils";
+
+const urlApi = getApiEvents();
 
 export function connectEvents(
   onMessage: (data: unknown) => void,
 ) {
-  const source = new EventSource(
-    'http://localhost:3001/api/events/live'
-  );
+  const source = new EventSource(`${urlApi}/live`);
 
   source.onmessage = event => {
     onMessage(

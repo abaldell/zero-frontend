@@ -9,6 +9,7 @@ import { ProcessBar } from "../../components/ProcessBar";
 import { buildResultsMap, loadPlaywrightResults } from "../../utils/ReadReport";
 import type { TestResult } from "../../types/test.type";
 import { executionService } from "../../services/execution.service";
+import { getApiEvents } from "../../utils/Utils";
 
 export default function DashboardPage() {
   const [finished, setFinished] = useState(false);
@@ -27,7 +28,7 @@ export default function DashboardPage() {
   const [duration, setDuration] = useState<number | null>(null);
 
   useEffect(() => {
-    const source = new EventSource("http://localhost:3001/api/events/live");
+    const source = new EventSource(`${getApiEvents()}/live`);
 
     source.onmessage = (event) => {
       const msg = JSON.parse(event.data);
@@ -120,17 +121,12 @@ export default function DashboardPage() {
     setRunOutput(null);
 
     try {
-      const response = await executionService.run({
+      await executionService.run({
         selectedPaths,
         selectedScriptKeys,
       });
-
-      // const result = await executionService.getById(response.data.executionId);
-      console.log("Execution queued:", response.data);
-      // setRunOutput(response.data);
     } catch (err) {
       setIsLoading(false);
-
       setError(err instanceof Error ? err.message : String(err));
     }
   };
