@@ -9,7 +9,7 @@ interface UiNavHorizontalProps {
 const UiNavHorizontal = (props: UiNavHorizontalProps) => {
   const { isFinished, isLoading, totalTests, numTest } = props;
   return (
-    <div className="w-full dark:bg-slate-900 bg-slate-100 p-3 h-[8.8%] transition-all duration-300 border-black/10 border-b">
+    <div className="w-full dark:bg-slate-900 bg-slate-100 p-3 h-[8.8%] transition-transform duration-300 border-black/10 border-b">
       <div className="flex w-full justify-end items-center">
         {/* <div className="flex items-center gap-3">
           <Sparkles size={22} className="text-sky-400" />

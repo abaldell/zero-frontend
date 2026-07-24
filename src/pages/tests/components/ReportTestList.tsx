@@ -12,11 +12,11 @@ export const ReportTestList = (props: ReportTestListProps) => {
 
   return (
     <div
-      className={`${testDetail.id ? "flex gap-3" : ""} mt-3 transition-all duration-300 items-stretch`}
+      className={`${testDetail.id ? "flex gap-3" : ""} mt-3 transition-transform duration-300 items-stretch`}
     >
       {items.length > 0 && (
         <div
-          className={`${testDetail.id ? "w-1/4" : "w-full mt-3"} transition-all duration-300 bg-slate-100 dark:bg-slate-900 p-3 rounded-md`}
+          className={`${testDetail.id ? "w-1/4" : "w-full mt-3"} transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 rounded-md`}
         >
           <CardTestList
             items={items}
@@ -27,7 +27,7 @@ export const ReportTestList = (props: ReportTestListProps) => {
       )}
       {testDetail.id && (
         <div
-          className={`${testDetail.id ? "w-3/4" : "w-full"} transition-all duration-300 bg-slate-100 dark:bg-slate-900 p-3 rounded-md`}
+          className={`${testDetail.id ? "w-3/4" : "w-full"} transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 rounded-md`}
         >
           <TestDetail test={testDetail} />
         </div>

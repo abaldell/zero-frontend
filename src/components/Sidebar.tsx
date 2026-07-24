@@ -25,7 +25,7 @@ export const Sidebar = (props: SidebarProps) => {
 
   return (
     <aside
-      className={`bg-slate-100 dark:bg-slate-900 text-black/70 dark:text-white transition-all duration-300 z-20 flex flex-col ${
+      className={`bg-slate-100 dark:bg-slate-900 text-black/70 dark:text-white transition-transform duration-300 z-20 flex flex-col ${
         open ? "w-1/6" : "w-20"
       }`}
     >

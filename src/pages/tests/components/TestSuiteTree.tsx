@@ -34,7 +34,7 @@ export default function TestSuiteTree({
 
       return (
         <li key={node.path} className="space-y-1">
-          <div className="flex items-center gap-2 rounded-md px-3 py-2 text-black/70 dark:text-white transition-all duration-300">
+          <div className="flex items-center gap-2 rounded-md px-3 py-2 text-black/70 dark:text-white transition-transform duration-300">
             {hasChildren ? (
               <button
                 type="button"
