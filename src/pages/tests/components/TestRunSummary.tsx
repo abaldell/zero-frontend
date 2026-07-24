@@ -43,7 +43,9 @@ export default function TestRunSummary({ summary, durationTotal }: Props) {
           </p>
           <p className="mt-2 text-3xl font-semibold text-black/70 dark:text-white">
             {durationTotal && (durationTotal / 1000).toFixed(1)}{" "}
-            <span className="text-white/30 text-base">segundos</span>
+            <span className="text-black/70 dark:text-white/30 text-base">
+              segundos
+            </span>
           </p>
         </div>
       </div>

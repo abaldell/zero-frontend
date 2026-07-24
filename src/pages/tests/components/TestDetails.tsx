@@ -4,6 +4,7 @@ import { today } from "../../../utils/Utils";
 import Popup from "../../../components/ui/UiPopup";
 import type { TestAttachment, TestResult } from "../../../types/test.type";
 import { UiAccordion } from "../../../components/ui";
+import TraceCard from "../../../components/cards/TraceCard";
 
 interface TestDetailProps {
   test: TestResult;
@@ -12,12 +13,14 @@ const TestDetail = (props: TestDetailProps) => {
   const { test } = props;
   const [traceTest, setTraceTest] = useState<TestAttachment>();
   const [screenShot, setScreenShot] = useState<TestAttachment>();
+  const [video, setVideo] = useState<TestAttachment>();
   const [openImage, setOpenImage] = useState(false);
 
   useEffect(() => {
     if (test.attachments) {
       getTestTrace();
       getTestScreen();
+      getTestVideo();
     }
   }, [test]);
 
@@ -29,6 +32,11 @@ const TestDetail = (props: TestDetailProps) => {
   const getTestScreen = () => {
     const screen = test.attachments.find((a) => a.name === "screenshot");
     setScreenShot(screen);
+  };
+
+  const getTestVideo = () => {
+    const video = test.attachments.find((a) => a.name === "video");
+    setVideo(video);
   };
 
   return (
@@ -77,6 +85,18 @@ const TestDetail = (props: TestDetailProps) => {
           </div>
         </div>
 
+        <div className="flex w-full justify-between items-center">
+          <div>
+            <p className="text-xs uppercase text-slate-500 mb-1">
+              Project: <span className="mt-2 font-medium">{test.project}</span>
+            </p>
+            <p className="text-xs uppercase text-slate-500">
+              Test ID: <span className="mt-2 font-medium">{test.id}</span>
+            </p>
+          </div>
+          {traceTest && <TraceCard traceUrl={traceTest.path} />}
+        </div>
+
         <div className="my-3">
           {test.steps &&
             test.steps.map((step, index) => (
@@ -119,31 +139,30 @@ const TestDetail = (props: TestDetailProps) => {
             <h3 className="mb-3 font-semibold">Video / Trace</h3>
 
             <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-700">
-              {traceTest ? (
-                <span className="text-slate-500">
-                  {traceTest.name}: {traceTest.path}
-                </span>
+              {screenShot ? (
+                <div className="overflow-hidden rounded-md w-full max-h-52">
+                  <img
+                    src={screenShot.path}
+                    alt="screenshot"
+                    width={1920}
+                    height={1080}
+                    className="w-full h-full rounded-md"
+                    onClick={() => setOpenImage(true)}
+                  />
+                  <Popup openImage={openImage} onCloseImage={setOpenImage}>
+                    <video
+                      controls
+                      width="100%"
+                      className="w-full h-full rounded-md"
+                    >
+                      <source src={video?.path} type={video?.contentType} />
+                    </video>
+                  </Popup>
+                </div>
               ) : (
-                <span className="text-slate-500">No trace available</span>
+                <span className="text-slate-500">No screenshot available</span>
               )}
             </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="p-4">
-            <p className="text-xs uppercase text-slate-500">Project</p>
-            <p className="mt-2 font-medium">{test.project}</p>
-          </div>
-
-          <div className="p-4">
-            <p className="text-xs uppercase text-slate-500">Retries</p>
-            <p className="mt-2 font-medium">{test.retries}</p>
-          </div>
-
-          <div className=" p-4">
-            <p className="text-xs uppercase text-slate-500">Test ID</p>
-            <p className="mt-2 truncate font-mono text-sm">{test.id}</p>
           </div>
         </div>
       </div>

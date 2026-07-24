@@ -13,7 +13,7 @@ export const TestScriptsList = (props: TestListProps) => {
     <section className="p-1">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm uppercase font-semibold tracking-[0.1em] text-teal-500">
+          <p className="text-sm uppercase font-semibold tracking-widest text-teal-500">
             Scripts disponibles
           </p>
         </div>

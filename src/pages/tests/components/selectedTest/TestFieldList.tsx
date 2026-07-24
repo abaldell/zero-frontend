@@ -14,7 +14,7 @@ export const TestFieldList = (props: TestFieldProps) => {
   return (
     <section className="p-1">
       <div className="mb-6 flex items-center justify-between gap-4">
-        <p className="text-sm uppercase font-semibold tracking-[0.1em] text-teal-500">
+        <p className="text-sm uppercase font-semibold tracking-widest text-teal-500">
           Jerarquía de test
         </p>
         {/* <span className="rounded-2xl bg-slate-600/90 dark:bg-slate-800/90 px-4 py-2 text-sm text-white dark:text-slate-300">

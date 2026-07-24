@@ -81,7 +81,7 @@ export const SelectTests = (props: SelectTestsProps) => {
       />
 
       <div className="flex-1 min-h-0 p-3 rounded-md border border-slate-100/90 bg-slate-100 dark:border-slate-800/90 dark:bg-slate-900/80 shadow-panel">
-        <div className="h-full custom-scroll overflow-y-auto  pr-3">
+        <div className="h-full custom-scroll overflow-y-auto pr-3 dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900">
           <TestFieldList
             testTree={testTree}
             selectedPaths={selectedPaths}
@@ -90,7 +90,7 @@ export const SelectTests = (props: SelectTestsProps) => {
         </div>
       </div>
       <div className="flex-1 min-h-0 p-3 rounded-md border border-slate-100/90 bg-slate-100 dark:border-slate-800/90 dark:bg-slate-900/80 shadow-panel">
-        <div className="h-full custom-scroll overflow-y-auto pr-3">
+        <div className="h-full custom-scroll overflow-y-auto pr-3 dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900">
           <TestScriptsList
             scriptSets={scriptSets}
             selectedScriptKeys={selectedScriptKeys}

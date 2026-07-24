@@ -22,7 +22,7 @@ export const Sidebar = (props: SidebarProps) => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
-  console.log("openDrawer", openDrawer);
+
   return (
     <aside
       className={`bg-slate-100 dark:bg-slate-900 text-black/70 dark:text-white transition-all duration-300 z-20 flex flex-col ${
@@ -30,7 +30,7 @@ export const Sidebar = (props: SidebarProps) => {
       }`}
     >
       <div
-        className={`flex items-center ${open ? "justify-between" : "justify-center"} p-3 border-b border-gray-700`}
+        className={`flex items-center ${open ? "justify-between" : "justify-center"} p-3 border-b border-black/10 `}
       >
         {open && <h1 className="text-xl font-bold">Zero</h1>}
 
@@ -42,7 +42,7 @@ export const Sidebar = (props: SidebarProps) => {
         </button>
       </div>
       <div
-        className={`flex flex-1 flex-col ${!open && "items-center"} justify-between`}
+        className={`flex flex-1 flex-col ${!open && "items-center"} justify-between border-r border-black/10`}
       >
         <nav className="mt-4">
           <Link

@@ -11,7 +11,7 @@ export const DrawerRelative = (props: DrawerRelativeProps) => {
   const setOpenDrawer = useNavStore((state) => state.setOpenDrawer);
 
   return (
-    <div className="min-w-2.5 bg-slate-100 border-slate-300 dark:bg-slate-900 border-l dark:border-slate-700 z-20 p-3 transform duration-500 ease-in-out transition-all">
+    <div className="min-w-2.5 bg-slate-100 border-slate-300 dark:bg-slate-900 border-l border-r dark:border-slate-700 z-20 p-3 transform duration-500 ease-in-out transition-all">
       <button
         type="button"
         onClick={() => setOpenDrawer(false)}
