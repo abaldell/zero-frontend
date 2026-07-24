@@ -1,10 +1,10 @@
-interface ProcessBarProps {
+interface UiProcessBarProps {
   progress: number;
-  message: string;
+  message?: string;
 }
 
-export const ProcessBar = (props: ProcessBarProps) => {
-  const { progress, message } = props;
+export const UiProcessBar = (props: UiProcessBarProps) => {
+  const { progress } = props;
   return (
     <div className="w-full">
       <div className=" w-full rounded-full bg-slate-300 dark:bg-slate-900">

@@ -89,8 +89,6 @@ export function buildResultsMap(report: any, test: TestResult[]) {
 
         const subTest = test.find(val => val.title === spec.title)
         const executionSteps = subTest?.steps ?? [];
-        console.log('lastResult?.steps', lastResult?.steps)
-        console.log('executionSteps', executionSteps)
 
         result.push({
         id: spec.id,

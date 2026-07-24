@@ -1,16 +1,18 @@
 import { FlaskConical, Home, Menu, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavStore } from "../store/navStore";
 
 interface SidebarProps {
   open: boolean;
   openDrawer: boolean;
-  setOpen: (open: boolean) => void;
-  onOpenDrawer: (open: boolean) => void;
 }
 
 export const Sidebar = (props: SidebarProps) => {
-  const { open, openDrawer, setOpen, onOpenDrawer } = props;
+  const { open, openDrawer } = props;
   const [darkMode, setDarkMode] = useState(true);
+  const setOpenDrawer = useNavStore((state) => state.setOpenDrawer);
+  const setOpenNav = useNavStore((state) => state.setOpenNav);
 
   useEffect(() => {
     setDarkMode(localStorage.getItem("theme") === "dark");
@@ -20,7 +22,7 @@ export const Sidebar = (props: SidebarProps) => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
-
+  console.log("openDrawer", openDrawer);
   return (
     <aside
       className={`bg-slate-100 dark:bg-slate-900 text-black/70 dark:text-white transition-all duration-300 z-20 flex flex-col ${
@@ -33,7 +35,7 @@ export const Sidebar = (props: SidebarProps) => {
         {open && <h1 className="text-xl font-bold">Zero</h1>}
 
         <button
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpenNav(!open)}
           className="p-2 rounded hover:bg-slate-200 dark:hover:bg-gray-800"
         >
           <Menu size={20} />
@@ -43,16 +45,24 @@ export const Sidebar = (props: SidebarProps) => {
         className={`flex flex-1 flex-col ${!open && "items-center"} justify-between`}
       >
         <nav className="mt-4">
-          <a className="flex items-center gap-3 px-6 py-3 font-semibold tracking-[0.1em] hover:bg-slate-200 dark:hover:bg-gray-800">
+          <Link
+            to="/"
+            className="flex items-center gap-3 px-6 py-3 font-semibold tracking-widest hover:bg-slate-200 dark:hover:bg-gray-800"
+          >
             <Home size={20} />
             {open && <span>Inicio</span>}
-          </a>
+          </Link>
           <a
-            className={`flex items-center gap-3 px-6 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 font-semibold tracking-[0.1em] ${openDrawer && "dark:text-teal-500  text-teal-500 bg-slate-200 dark:bg-gray-800"}`}
-            onClick={() => onOpenDrawer(true)}
+            className={`flex items-stretch gap-3 ${openDrawer ? "pl-2 dark:text-teal-500  text-teal-500" : "px-6 py-3"} h-12 hover:bg-slate-200 dark:hover:bg-slate-800 font-semibold tracking-widest`}
+            onClick={() => setOpenDrawer(!openDrawer)}
           >
-            <FlaskConical size={20} />
-            {open && <span>Test</span>}
+            {openDrawer && (
+              <span className="w-1 bg-teal-500 ring-1 ring-inset ring-teal-500/20 rounded-md my-1.5"></span>
+            )}
+            <div className="flex flex-1 items-center w-full gap-3">
+              <FlaskConical size={20} />
+              {open && <span>Test</span>}
+            </div>
           </a>
         </nav>
         <nav className="p-3 flex items-center gap-3 ">

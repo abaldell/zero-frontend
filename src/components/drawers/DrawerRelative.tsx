@@ -1,13 +1,15 @@
 import React from "react";
 import { X } from "lucide-react";
+import { useNavStore } from "../../store/navStore";
 
 interface DrawerRelativeProps {
   children: React.ReactNode;
-  setOpenDrawer: (open: boolean) => void;
 }
 
 export const DrawerRelative = (props: DrawerRelativeProps) => {
-  const { children, setOpenDrawer } = props;
+  const { children } = props;
+  const setOpenDrawer = useNavStore((state) => state.setOpenDrawer);
+
   return (
     <div className="min-w-2.5 bg-slate-100 border-slate-300 dark:bg-slate-900 border-l dark:border-slate-700 z-20 p-3 transform duration-500 ease-in-out transition-all">
       <button

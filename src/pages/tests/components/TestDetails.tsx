@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { CircleIcon, Clock, FolderOpen } from "lucide-react";
-import { Accordion } from "../../../components/Accordion";
 import { today } from "../../../utils/Utils";
-import Popup from "../../../components/Popup";
+import Popup from "../../../components/ui/UiPopup";
 import type { TestAttachment, TestResult } from "../../../types/test.type";
+import { UiAccordion } from "../../../components/ui";
 
 interface TestDetailProps {
   test: TestResult;
@@ -80,7 +80,7 @@ const TestDetail = (props: TestDetailProps) => {
         <div className="my-3">
           {test.steps &&
             test.steps.map((step, index) => (
-              <Accordion key={index} step={step} level={0} />
+              <UiAccordion key={index} step={step} level={0} />
             ))}
         </div>
 

@@ -5,26 +5,19 @@ import type { ScriptSet, TestFileNode } from "../../../../types/playwright";
 import { TestFieldList } from "./TestFieldList";
 import { TestScriptsList } from "./TestScriptsList";
 import { getApiTestSuite } from "../../../../utils/Utils";
+import { useNavStore } from "../../../../store/navStore";
 
 const API_SUITES = getApiTestSuite();
 
 interface SelectTestsProps {
   isLoading: boolean;
-  onOpenDrawer: (open: boolean) => void;
   onRun: () => void;
-  onError: (error: string | null) => void;
   onSelectPath: (path: string[]) => void;
   onSelectScript: (script: string[]) => void;
 }
 export const SelectTests = (props: SelectTestsProps) => {
-  const {
-    onOpenDrawer,
-    onRun,
-    onError,
-    isLoading,
-    onSelectPath,
-    onSelectScript,
-  } = props;
+  const { onRun, isLoading, onSelectPath, onSelectScript } = props;
+  const setOpenDrawer = useNavStore((state) => state.setOpenDrawer);
   const [scriptSets, setScriptSets] = useState<ScriptSet[]>([]);
   const [testTree, setTestTree] = useState<TestFileNode[]>([]);
   const [selectedScriptKeys, setSelectedScriptKeys] = useState<string[]>([]);
@@ -40,7 +33,6 @@ export const SelectTests = (props: SelectTestsProps) => {
   );
 
   const fetchSuites = async () => {
-    onError(null);
     try {
       const response = await fetch(API_SUITES);
       if (!response.ok) {
@@ -50,7 +42,7 @@ export const SelectTests = (props: SelectTestsProps) => {
       setScriptSets(payload.scriptSets ?? []);
       setTestTree(payload.testTree ?? []);
     } catch (err) {
-      onError((err as Error).message);
+      console.log("error: ", err);
     }
   };
 
@@ -69,19 +61,18 @@ export const SelectTests = (props: SelectTestsProps) => {
       const newPaths = current.includes(path)
         ? current.filter((item) => item !== path)
         : [...current, path];
-      debugger;
       onSelectPath(newPaths);
       return newPaths;
     });
   };
 
   const handleRun = async () => {
-    onOpenDrawer(false);
+    setOpenDrawer(false);
     onRun();
   };
 
   return (
-    <DrawerRelative setOpenDrawer={(open) => onOpenDrawer(open)}>
+    <DrawerRelative>
       <ActionsSelectedTest
         fetchSuites={fetchSuites}
         selectedCount={selectedCount}
