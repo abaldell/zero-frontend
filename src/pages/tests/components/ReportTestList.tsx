@@ -11,8 +11,7 @@ export interface ReportTestListProps {
 export const ReportTestList = (props: ReportTestListProps) => {
   const { items, itemsResult } = props;
   const [testDetail, setTestDetail] = useState<TestResult>({} as TestResult);
-  console.log("items", items);
-  console.log("itemsResult", itemsResult);
+
   return (
     <div
       className={`${testDetail.id ? "flex gap-3" : ""} mt-3 transition-transform duration-300 items-stretch h-screen`}

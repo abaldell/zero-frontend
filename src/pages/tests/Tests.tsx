@@ -17,7 +17,6 @@ export default function TestsPage() {
   const durationStore = useExecutionStore((state) => state.durationStore);
   const progressStore = useExecutionStore((state) => state.progressStore);
 
-  console.log("resultTestStore", resultTestStore);
   return (
     <div
       className={`flex flex-col ${open ? "w-5/6" : "w-[95%]"} ${openDrawer ? "absolute top-0 right-0" : "relative"} transition-transform duration-300`}
