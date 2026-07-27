@@ -11,7 +11,7 @@ interface ExecutionStore {
   durationStore: number,
   progressStore: number,
   testsStore: TestResult[],
-  resultTestStore: TestResult[]
+  resultTestStore: Record<string, TestResult[]>
 
   setTestExecutions: (testsExecutions: TestResult[]) => void;
   setLoadingExecutions:(loading:boolean) => void;
@@ -20,7 +20,7 @@ interface ExecutionStore {
   setDurationExecutions:(duration:number) => void;
   setTotalExecutions:(total:number) => void;
   setSummaryExecutions:(summary:Summary) => void;
-  setResultTestExecutions:(tests:TestResult[]) => void
+  setResultTestExecutions:(tests:Record<string, TestResult[]>) => void
   reset: ()=> void;
 }
 
@@ -33,7 +33,7 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
   durationStore: 0,
   progressStore: 0,
   testsStore: [],
-  resultTestStore: [],
+  resultTestStore: {},
 
   setTestExecutions:(execution) => 
     set({testsStore:execution}),
@@ -68,6 +68,6 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
       durationStore: 0,
       progressStore: 0,
       testsStore: [],
-      resultTestStore: [],
+      resultTestStore: {},
     }),
 }));

@@ -15,6 +15,7 @@ const TestDetail = (props: TestDetailProps) => {
   const [screenShot, setScreenShot] = useState<TestAttachment>();
   const [video, setVideo] = useState<TestAttachment>();
   const [openImage, setOpenImage] = useState(false);
+  const [openVideo, setOpenVideo] = useState(false);
 
   useEffect(() => {
     if (test.attachments) {
@@ -40,8 +41,8 @@ const TestDetail = (props: TestDetailProps) => {
   };
 
   return (
-    <div className="min-h-screen text-black/70 dark:text-white">
-      <div className="mx-auto max-w-6xl space-y-6 p-6">
+    <div className=" text-black/70 dark:text-white">
+      <div className="mx-auto  space-y-6 p-6">
         <div>
           <div className="flex items-center justify-between">
             <div>
@@ -119,7 +120,7 @@ const TestDetail = (props: TestDetailProps) => {
                     className="w-full h-full rounded-md"
                     onClick={() => setOpenImage(true)}
                   />
-                  <Popup openImage={openImage} onCloseImage={setOpenImage}>
+                  <Popup open={openImage} onClose={setOpenImage}>
                     <img
                       src={screenShot.path}
                       alt="screenshot"
@@ -147,9 +148,9 @@ const TestDetail = (props: TestDetailProps) => {
                     width={1920}
                     height={1080}
                     className="w-full h-full rounded-md"
-                    onClick={() => setOpenImage(true)}
+                    onClick={() => setOpenVideo(true)}
                   />
-                  <Popup openImage={openImage} onCloseImage={setOpenImage}>
+                  <Popup open={openVideo} onClose={setOpenVideo}>
                     <video
                       controls
                       width="100%"

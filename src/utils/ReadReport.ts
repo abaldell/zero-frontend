@@ -48,28 +48,41 @@ export function getAttachmentUrl(filePath: string) {
     return `${getApiFiles()}/${relativePath}`;
 }
 
+function groupByFile(allTest: TestResult[]){
+    const groupedTests = allTest.reduce <Record<string, TestResult[]>>((groups, test) => {
+        const file:string = test.file || test.file || 'unknown';
+
+        if (!groups[file]) {
+            groups[file] = [];
+        }
+
+        groups[file].push(test);
+
+        return groups;
+    }, {});
+
+    return groupedTests
+}
 
 function buildStepTree(step: ReporterStep | TestStepNode, allSteps: TestResult[]):TestStepNode {
-  
-return {
-    ...step,
-    children: allSteps
-      .filter(s => s.parent === step.title)
-      .map(s =>
-        buildStepTree(
-          {
-            title: s.title,
-            category: s.category,
-            error:s.error?.message,
-            status: s.status,
-            duration: s.duration,
-            children: [],
-          },
-          allSteps
-        )
-      ),
-  };
-
+    return {
+        ...step,
+        children: allSteps
+        .filter(s => s.parent === step.title)
+        .map(s =>
+            buildStepTree(
+            {
+                title: s.title,
+                category: s.category,
+                error:s.error?.message,
+                status: s.status,
+                duration: s.duration,
+                children: [],
+            },
+            allSteps
+            )
+        ),
+    };
 }
 
 
@@ -113,5 +126,6 @@ export function buildResultsMap(report: any, test: TestResult[]) {
         });
     }
 
-    return result;
+    const groupedResult = groupByFile(result)
+    return groupedResult;
 }

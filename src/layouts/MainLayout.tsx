@@ -46,8 +46,6 @@ export default function MainLayout() {
     (state) => state.setResultTestExecutions,
   );
 
-  const resetExecutions = useExecutionStore((state) => state.reset);
-
   const [tests, setTests] = useState<TestResult[]>([]);
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
   const [selectedScriptKeys, setSelectedScriptKeys] = useState<string[]>([]);
@@ -135,7 +133,6 @@ export default function MainLayout() {
   }, [openDrawer]);
 
   const runTests = async () => {
-    resetExecutions();
     navigate("/tests");
 
     try {
@@ -164,6 +161,7 @@ export default function MainLayout() {
   const readResults = async (tests: TestResult[]) => {
     const report = await loadPlaywrightResults();
     const resultsMap = buildResultsMap(report, tests);
+
     setResultTestExecutions(resultsMap);
   };
 

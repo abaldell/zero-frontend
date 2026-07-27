@@ -1,5 +1,5 @@
 import { Check, ChevronRight, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { stripAnsi } from "../../utils/Utils";
 import type { TestResult } from "../../types/test.type";
 
@@ -14,6 +14,10 @@ export const UiAccordion = (props: UiAccordionProps) => {
 
   const hasChildren = step.children?.length || step.details;
   const errorStep = step.error ? true : step.status === "failed" ? true : false;
+
+  useEffect(() => {
+    setOpen(false);
+  }, [step]);
 
   return (
     <div>
