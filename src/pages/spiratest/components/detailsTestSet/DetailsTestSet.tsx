@@ -1,0 +1,113 @@
+import React, { useEffect, useState } from "react";
+import {
+  getCasesTestSet,
+  getDetailTestSet,
+} from "../../../../services/spiratest.service";
+import type { CaseTestSet, TestSet } from "../../../../types/spiratest.types";
+import { StatsTestSet, type Stats } from "./StatsTestSet";
+import { CasesTestSet } from "./CasesTestSet";
+import { CircleIcon } from "lucide-react";
+import { Spinner } from "flowbite-react";
+
+interface DetailsTestSetProps {
+  testSelected: number;
+}
+
+export const DetailsTestSet = (props: DetailsTestSetProps) => {
+  const { testSelected } = props;
+  const [details, setDetails] = useState<TestSet>({} as TestSet);
+  const [casesTest, setCasesTest] = useState<CaseTestSet[]>([]);
+  const [statsDetails, setStatsDetails] = useState<Stats>({} as Stats);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (testSelected) {
+      const loadData = async () => {
+        try {
+          const data = await getDetailTestSet(1, testSelected);
+          const dataCases = await getCasesTestSet(1, testSelected);
+
+          setDetails(data);
+          setCasesTest(dataCases);
+          setStatsDetails({
+            categories: [
+              "Pasaron",
+              "Fallaron",
+              "Bloqueados",
+              "Precaución",
+              "No ejecutados",
+              "No aplican",
+            ],
+            values: [
+              data.CountPassed,
+              data.CountFailed,
+              data.CountBlocked,
+              data.CountCaution,
+              data.CountNotRun,
+              data.CountNotApplicable,
+            ],
+            colors: [
+              "#00a63e",
+              "#fb2c36",
+              "#d08700",
+              "#f54900",
+              "#45556c",
+              "#aeaeae",
+            ],
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadData();
+    }
+  }, [testSelected]);
+
+  console.log("details", details);
+
+  return (
+    <div className={`${loading ? "flex items-center justify-center" : ""}`}>
+      {loading ? (
+        <Spinner color="info" aria-label="Extra large Info spinner" size="xl" />
+      ) : (
+        <>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold">{details.Name}</h1>
+            </div>
+
+            <div className="flex flex-row items-center gap-x-3">
+              {details.TestSetStatusName === "In Progress" && (
+                <CircleIcon
+                  size={18}
+                  className="bg-sky-600 text-sky-600 ring-1 ring-inset ring-sky-600/20 rounded-2xl"
+                />
+              )}
+              {details.TestSetStatusName === "Blocked" && (
+                <CircleIcon
+                  size={18}
+                  className="bg-red-600 text-red-700 ring-1 ring-inset ring-red-500/20 rounded-2xl"
+                />
+              )}
+              {details.TestSetStatusName === "Deferred" && (
+                <CircleIcon
+                  size={18}
+                  className="bg-orange-600 text-orange-700 ring-1 ring-inset ring-orange-500/20 rounded-2xl"
+                />
+              )}
+              {details.TestSetStatusName === "Completed" && (
+                <CircleIcon
+                  size={18}
+                  className="bg-green-600 text-green-700 ring-1 ring-inset ring-green-500/20 rounded-2xl"
+                />
+              )}
+              {details.TestSetStatusName?.toUpperCase()}
+            </div>
+          </div>
+          <StatsTestSet stats={statsDetails} />
+          <CasesTestSet casesTest={casesTest} />
+        </>
+      )}
+    </div>
+  );
+};

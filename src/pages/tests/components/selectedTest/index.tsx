@@ -23,15 +23,6 @@ export const SelectTests = (props: SelectTestsProps) => {
   const [selectedScriptKeys, setSelectedScriptKeys] = useState<string[]>([]);
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
 
-  useEffect(() => {
-    fetchSuites();
-  }, []);
-
-  const selectedCount = useMemo(
-    () => selectedScriptKeys.length + selectedPaths.length,
-    [selectedScriptKeys, selectedPaths],
-  );
-
   const fetchSuites = async () => {
     try {
       const response = await fetch(API_SUITES);
@@ -45,6 +36,17 @@ export const SelectTests = (props: SelectTestsProps) => {
       console.log("error: ", err);
     }
   };
+  useEffect(() => {
+    const suites = async () => {
+      await fetchSuites();
+    };
+    suites();
+  }, []);
+
+  const selectedCount = useMemo(
+    () => selectedScriptKeys.length + selectedPaths.length,
+    [selectedScriptKeys, selectedPaths],
+  );
 
   const toggleScriptKey = (key: string) => {
     setSelectedScriptKeys((current) => {

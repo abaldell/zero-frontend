@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import DashboardPage from "../pages/dashboard/Dashboard";
 import TestsPage from "../pages/tests/Tests";
 import MainLayout from "../layouts/MainLayout";
+import SpiraTestPage from "../pages/spiratest/SpiraTest";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
       {
         path: "/tests",
         element: <TestsPage />,
+      },
+      {
+        path: "/testset",
+        element: <SpiraTestPage />,
       },
     ],
   },

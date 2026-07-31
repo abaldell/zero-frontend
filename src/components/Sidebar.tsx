@@ -1,7 +1,7 @@
-import { FlaskConical, Home, Menu, Moon, Sun } from "lucide-react";
+import { FlaskConical, Menu, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useNavStore } from "../store/navStore";
+import { UiNav } from "./ui";
 
 interface SidebarProps {
   open: boolean;
@@ -10,13 +10,11 @@ interface SidebarProps {
 
 export const Sidebar = (props: SidebarProps) => {
   const { open, openDrawer } = props;
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark",
+  );
   const setOpenDrawer = useNavStore((state) => state.setOpenDrawer);
   const setOpenNav = useNavStore((state) => state.setOpenNav);
-
-  useEffect(() => {
-    setDarkMode(localStorage.getItem("theme") === "dark");
-  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -45,25 +43,16 @@ export const Sidebar = (props: SidebarProps) => {
         className={`flex flex-1 flex-col ${!open && "items-center"} justify-between border-r border-black/10`}
       >
         <nav className="mt-4">
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-6 py-3 font-semibold tracking-widest hover:bg-slate-200 dark:hover:bg-gray-800"
-          >
-            <Home size={20} />
-            {open && <span>Inicio</span>}
-          </Link>
-          <a
-            className={`flex items-stretch gap-3 ${openDrawer ? "pl-2 dark:text-teal-500  text-teal-500" : "px-6 py-3"} h-12 hover:bg-slate-200 dark:hover:bg-slate-800 font-semibold tracking-widest`}
+          <button
+            className={`flex w-full items-stretch gap-3 h-12 font-semibold tracking-widest`}
             onClick={() => setOpenDrawer(!openDrawer)}
           >
-            {openDrawer && (
-              <span className="w-1 bg-teal-500 ring-1 ring-inset ring-teal-500/20 rounded-md my-1.5"></span>
-            )}
-            <div className="flex flex-1 items-center w-full gap-3">
+            <div className="flex items-center w-full gap-3 p-6  bg-teal-500 hover:bg-teal-600 text-white rounded-md ">
               <FlaskConical size={20} />
-              {open && <span>Test</span>}
+              {open && <span>Ejecutar Tests</span>}
             </div>
-          </a>
+          </button>
+          <UiNav isOpen={open} />
         </nav>
         <nav className="p-3 flex items-center gap-3 ">
           <button

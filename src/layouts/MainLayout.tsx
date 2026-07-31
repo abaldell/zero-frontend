@@ -49,7 +49,6 @@ export default function MainLayout() {
   const [tests, setTests] = useState<TestResult[]>([]);
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
   const [selectedScriptKeys, setSelectedScriptKeys] = useState<string[]>([]);
-  const [runOutput, setRunOutput] = useState<string[] | null>(null);
 
   useEffect(() => {
     const source = new EventSource(`${getApiEvents()}/live`);
@@ -90,12 +89,6 @@ export default function MainLayout() {
           setLoadingExecutions(false);
           break;
 
-        case "log":
-        case "error":
-        case "info":
-          setRunOutput((prev) => [...(prev ?? []), msg.message]);
-          break;
-
         case "summary":
           setSummaryExecutions(msg);
           break;
@@ -109,6 +102,40 @@ export default function MainLayout() {
 
     return () => source.close();
   }, []);
+
+  const changeProgress = () => {
+    if (!totalTestsStore) {
+      setProgressExecutions(0);
+      return;
+    }
+
+    const completed = testsStore.filter(
+      (t) => t.status === "passed" || t.status === "failed",
+    ).length;
+    const progressPercentage = Math.round((completed / totalTestsStore) * 100);
+    setProgressExecutions(progressPercentage);
+  };
+
+  const readResults = async (tests: TestResult[]) => {
+    const report = await loadPlaywrightResults();
+    const resultsMap = buildResultsMap(report, tests);
+
+    setResultTestExecutions(resultsMap);
+  };
+
+  const runTests = async () => {
+    navigate("/tests");
+
+    try {
+      await executionService.run({
+        selectedPaths,
+        selectedScriptKeys,
+      });
+    } catch (err) {
+      setLoadingExecutions(false);
+      console.log("Error: ", err);
+    }
+  };
 
   useEffect(() => {
     if (tests.length > 0) {
@@ -131,39 +158,6 @@ export default function MainLayout() {
       document.body.classList.remove("overflow-hidden");
     };
   }, [openDrawer]);
-
-  const runTests = async () => {
-    navigate("/tests");
-
-    try {
-      await executionService.run({
-        selectedPaths,
-        selectedScriptKeys,
-      });
-    } catch (err) {
-      setLoadingExecutions(false);
-    }
-  };
-
-  const changeProgress = () => {
-    if (!totalTestsStore) {
-      setProgressExecutions(0);
-      return;
-    }
-
-    const completed = testsStore.filter(
-      (t) => t.status === "passed" || t.status === "failed",
-    ).length;
-    const progressPercentage = Math.round((completed / totalTestsStore) * 100);
-    setProgressExecutions(progressPercentage);
-  };
-
-  const readResults = async (tests: TestResult[]) => {
-    const report = await loadPlaywrightResults();
-    const resultsMap = buildResultsMap(report, tests);
-
-    setResultTestExecutions(resultsMap);
-  };
 
   return (
     <main className="flex min-h-screen bg-white text-black/70 dark:bg-slate-800 dark:text-slate-100">

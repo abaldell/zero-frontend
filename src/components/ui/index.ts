@@ -3,7 +3,7 @@ import { UiAccordion } from "./UiAccordion";
 import UiPopup from "./UiPopup";
 import { UiNav } from "./navs/UiNav";
 import UiNavHorizontal from "./navs/UiNavHorizontal";
-import { UiProcessBar } from "./UiProcessBar";
+import { UiProcessBar } from "../processBar/UiProcessBar";
 
 export {
     UiCard,

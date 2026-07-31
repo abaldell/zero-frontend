@@ -1,5 +1,5 @@
 import { Check, ChevronRight, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { stripAnsi } from "../../utils/Utils";
 import type { TestResult } from "../../types/test.type";
 
@@ -15,10 +15,6 @@ export const UiAccordion = (props: UiAccordionProps) => {
   const hasChildren = step.children?.length || step.details;
   const errorStep = step.error ? true : step.status === "failed" ? true : false;
 
-  useEffect(() => {
-    setOpen(false);
-  }, [step]);
-
   return (
     <div>
       <div
@@ -28,8 +24,6 @@ export const UiAccordion = (props: UiAccordionProps) => {
             ? "border-green-600 bg-green-600/20"
             : "border-red-800 bg-red-800/20"
         }`}
-        // className="flex items-center justify-between py-2 hover:bg-slate-800"
-        // style={{ paddingLeft: `${level * 24 + 16}px` }}
       >
         <div className={`flex items-center gap-2 rounded-l-sm rounded-r-sm`}>
           {hasChildren ? (

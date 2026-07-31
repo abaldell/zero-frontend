@@ -17,13 +17,11 @@ const TestDetail = (props: TestDetailProps) => {
   const [openImage, setOpenImage] = useState(false);
   const [openVideo, setOpenVideo] = useState(false);
 
-  useEffect(() => {
-    if (test.attachments) {
-      getTestTrace();
-      getTestScreen();
-      getTestVideo();
-    }
-  }, [test]);
+  const getAttachments = () => {
+    getTestTrace();
+    getTestScreen();
+    getTestVideo();
+  };
 
   const getTestTrace = () => {
     const trace = test.attachments.find((a) => a.name === "trace");
@@ -39,6 +37,12 @@ const TestDetail = (props: TestDetailProps) => {
     const video = test.attachments.find((a) => a.name === "video");
     setVideo(video);
   };
+
+  useEffect(() => {
+    if (test.attachments) {
+      getAttachments();
+    }
+  }, [test]);
 
   return (
     <div className=" text-black/70 dark:text-white">
@@ -100,8 +104,8 @@ const TestDetail = (props: TestDetailProps) => {
 
         <div className="my-3">
           {test.steps &&
-            test.steps.map((step, index) => (
-              <UiAccordion key={index} step={step} level={0} />
+            test.steps.map((step) => (
+              <UiAccordion key={step.id} step={step} level={0} />
             ))}
         </div>
 
