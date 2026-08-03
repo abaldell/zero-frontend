@@ -2,7 +2,8 @@ import TestRunSummary from "./components/TestRunSummary";
 import { ReportTestList } from "./components/ReportTestList";
 import { useExecutionStore } from "../../store/executionStore";
 import { useNavStore } from "../../store/navStore";
-import { UiNavHorizontal, UiProcessBar } from "../../components/ui";
+import { UiProcessBar } from "../../components/ui";
+import NavTests from "./components/NavTests";
 
 export default function TestsPage() {
   const open = useNavStore((state) => state.open);
@@ -21,7 +22,7 @@ export default function TestsPage() {
     <div
       className={`flex flex-col ${open ? "w-5/6" : "w-[95%]"} ${openDrawer ? "absolute top-0 right-0" : "relative"} transition-transform duration-300`}
     >
-      <UiNavHorizontal
+      <NavTests
         isFinished={isFinishedStore}
         isLoading={isLoadingStore}
         totalTests={totalTestsStore}

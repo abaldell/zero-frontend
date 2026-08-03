@@ -45,3 +45,6 @@ export const getApiFiles = () => {
 export const getApiSpiraTest = () => {
   return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_SPIRATEST}`
 }
+export const getApiPW = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_PW}`
+}

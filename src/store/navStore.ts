@@ -1,12 +1,11 @@
-
 import { create } from 'zustand';
 
 interface NavStore {
   open: boolean,
   openDrawer: boolean
 
-  setOpenNav: (executions: any) => void;
-  setOpenDrawer: (executions: any) => void;
+  setOpenNav: (executions: boolean) => void;
+  setOpenDrawer: (executions: boolean) => void;
   reset: ()=> void
 }
 

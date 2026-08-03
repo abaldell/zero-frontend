@@ -8,6 +8,8 @@ import { StatsTestSet, type Stats } from "./StatsTestSet";
 import { CasesTestSet } from "./CasesTestSet";
 import { CircleIcon } from "lucide-react";
 import { Spinner } from "flowbite-react";
+import { getTestPW } from "../../../../services/playwright.service";
+import type { TestPW } from "../../../../types/playwright";
 
 interface DetailsTestSetProps {
   testSelected: number;
@@ -18,6 +20,7 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
   const [details, setDetails] = useState<TestSet>({} as TestSet);
   const [casesTest, setCasesTest] = useState<CaseTestSet[]>([]);
   const [statsDetails, setStatsDetails] = useState<Stats>({} as Stats);
+  const [testPW, setTestPw] = useState<TestPW[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,9 +29,11 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
         try {
           const data = await getDetailTestSet(1, testSelected);
           const dataCases = await getCasesTestSet(1, testSelected);
+          const dataTestPW = await getTestPW();
 
           setDetails(data);
           setCasesTest(dataCases);
+          setTestPw(dataTestPW);
           setStatsDetails({
             categories: [
               "Pasaron",
@@ -63,15 +68,13 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
     }
   }, [testSelected]);
 
-  console.log("details", details);
-
   return (
     <div className={`${loading ? "flex items-center justify-center" : ""}`}>
       {loading ? (
         <Spinner color="info" aria-label="Extra large Info spinner" size="xl" />
       ) : (
         <>
-          <div className="flex items-center justify-between">
+          <div className="sticky top-0 left-0 flex items-center justify-between bg-slate-900 z-50 p-3">
             <div>
               <h1 className="text-xl font-bold">{details.Name}</h1>
             </div>
@@ -105,7 +108,7 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
             </div>
           </div>
           <StatsTestSet stats={statsDetails} />
-          <CasesTestSet casesTest={casesTest} />
+          <CasesTestSet casesTest={casesTest} testPW={testPW} />
         </>
       )}
     </div>

@@ -6,6 +6,7 @@ import { useNavStore } from "../../store/navStore";
 import { SidebarProjectId } from "./components/SidebarProjectId";
 import { DetailsTestSet } from "./components/detailsTestSet/DetailsTestSet";
 import { Spinner } from "flowbite-react";
+import NavSpiratest from "./components/NavSpiratest";
 
 export default function SpiraTestPage() {
   const [testSets, setTestSets] = useState<SpiraTestSet[]>([]);
@@ -19,7 +20,6 @@ export default function SpiraTestPage() {
     const loadData = async () => {
       try {
         const data = await getAllTestTree(1);
-
         setTestSets(data);
       } finally {
         setLoading(false);
@@ -30,8 +30,9 @@ export default function SpiraTestPage() {
 
   return (
     <div
-      className={`flex  flex-col ${open ? "w-5/6" : "w-[94%]"} ${openDrawer ? "absolute top-0 right-0" : "relative"} transition-transform duration-300`}
+      className={`flex  flex-col ${open ? "w-5/6" : "w-[95%]"} ${openDrawer ? "absolute top-0 right-0" : "relative"} transition-transform duration-300`}
     >
+      <NavSpiratest isFinished={true} />
       <div
         className={`flex gap-3 p-3 transition-transform duration-300 ${loading ? "items-center justify-center" : "items-stretch"} h-screen`}
       >
@@ -54,7 +55,7 @@ export default function SpiraTestPage() {
             </div>
 
             <div
-              className={`${testSetId ? "w-3/4" : "w-full"} custom-scroll overflow-y-auto dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900 transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 rounded-md`}
+              className={`${testSetId ? "w-3/4" : "w-full"} custom-scroll overflow-y-auto dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900 transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 pt-0 rounded-md`}
             >
               {testSetId ? (
                 <DetailsTestSet testSelected={testSetId} />

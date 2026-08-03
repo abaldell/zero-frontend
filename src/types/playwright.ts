@@ -22,3 +22,7 @@ export interface TestRunSummary {
   output: string;
   reportPath?: string;
 }
+
+export interface TestPW{
+  testCaseId:number
+}
