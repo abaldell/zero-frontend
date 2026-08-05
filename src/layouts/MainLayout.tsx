@@ -128,7 +128,6 @@ export default function MainLayout() {
 
   const runTests = async () => {
     setTests([]);
-    setTestExecutions([]);
     navigate("/tests");
 
     try {
