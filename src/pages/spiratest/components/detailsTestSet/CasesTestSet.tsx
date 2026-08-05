@@ -4,13 +4,38 @@ import { UiCard } from "../../../../components/ui";
 import { CircleIcon } from "lucide-react";
 import type { TestPW } from "../../../../types/playwright";
 import { Checkbox } from "flowbite-react";
+import { useEffect, useState } from "react";
 
 interface CasesTestSetProps {
   casesTest: CaseTestSet[];
   testPW: TestPW[];
+  onSelectTestCase: (testCases: TestPW[]) => void;
+  onSelectPaths: (paths: string[]) => void;
 }
 export const CasesTestSet = (props: CasesTestSetProps) => {
-  const { casesTest, testPW } = props;
+  const { casesTest, testPW, onSelectTestCase, onSelectPaths } = props;
+  const [selectedCases, setSelectedCases] = useState<TestPW[]>([]);
+
+  useEffect(() => {
+    if (selectedCases) {
+      onSelectTestCase(selectedCases);
+    }
+  }, [selectedCases]);
+
+  const changeSelectedCases = (testCaseId: number) => {
+    const urlPath = testPW.find((item) => item.id === testCaseId)?.path ?? "";
+    setSelectedCases((prevSelectedCases) => {
+      const isSelected = prevSelectedCases.some(
+        (item) => item.id === testCaseId,
+      );
+      if (isSelected) {
+        return prevSelectedCases.filter((item) => item.id !== testCaseId);
+      } else {
+        return [...prevSelectedCases, { id: testCaseId, path: urlPath }];
+      }
+    });
+    onSelectPaths(selectedCases.map((testCase) => testCase.path));
+  };
 
   return (
     <div className="my-5">
@@ -22,31 +47,32 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
       <ul role="list" className="divide-y divide-slate-700/50">
         {casesTest.map((item: CaseTestSet) => {
           const lastDate = formatDate(item.LastUpdateDate);
-          const isEnabled = testPW.find(
-            (test) => test.testCaseId === item.TestCaseId,
-          )
+          const isEnabled = testPW.find((test) => test.id === item.TestCaseId)
             ? true
             : false;
           return (
-            <>
-              <li
-                key={`case-${item.TestCaseId}`}
-                className={`text-black/70 hover:bg-slate-200 dark:hover:bg-slate-800 dark:text-white`}
-              >
-                <label htmlFor={`${item.TestCaseId}`}>
-                  <UiCard>
-                    <div className={`flex flex-row  items-center gap-x-3`}>
-                      <div>
-                        <Checkbox
-                          id={`${item.TestCaseId}`}
-                          className={`disabled:bg-slate-300 dark:disabled:bg-slate-400 dark:disabled:border-slate-700 disabled:border-slate-900 border-teal-500 bg-teal-50 text-teal-500 placeholder-teal-700 focus:border-0 focus:ring-0 dark:border-teal-400 dark:bg-teal-100 dark:focus:border-0 dark:focus:ring-0`}
-                          disabled={!isEnabled}
-                        />
-                      </div>
-                      <div className="flex gap-3 items-center w-24">
-                        <CircleIcon
-                          size={18}
-                          className={`ring-1 ring-inset rounded-2xl 
+            <li
+              key={`case-${item.TestCaseId}`}
+              className={`text-black/70 hover:bg-slate-200 dark:hover:bg-slate-800 dark:text-white`}
+            >
+              <label htmlFor={`${item.TestCaseId}`}>
+                <UiCard>
+                  <div className={`flex flex-row  items-center gap-x-3`}>
+                    <div>
+                      <Checkbox
+                        id={`${item.TestCaseId}`}
+                        className={`disabled:bg-slate-300 dark:disabled:bg-slate-400 dark:disabled:border-slate-700 disabled:border-slate-900 border-teal-500 bg-teal-50 text-teal-500 placeholder-teal-700 focus:border-0 focus:ring-0 dark:border-teal-400 dark:bg-teal-100 dark:focus:border-0 dark:focus:ring-0`}
+                        disabled={!isEnabled}
+                        checked={selectedCases.some(
+                          (sc) => sc.id === item.TestCaseId,
+                        )}
+                        onChange={() => changeSelectedCases(item.TestCaseId)}
+                      />
+                    </div>
+                    <div className="flex gap-3 items-center w-24">
+                      <CircleIcon
+                        size={18}
+                        className={`ring-1 ring-inset rounded-2xl 
                             ${
                               item.ExecutionStatusName === "Not Run"
                                 ? "bg-slate-600 text-slate-600 ring-slate-600/20"
@@ -59,9 +85,9 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
                                       : "bg-green-600 text-green-700 ring-green-500/20"
                             }
                             `}
-                        />
-                        <span
-                          className={`
+                      />
+                      <span
+                        className={`
                           ${
                             item.ExecutionStatusName === "Not Run"
                               ? " text-slate-600"
@@ -74,28 +100,27 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
                                     : "text-green-700"
                           }
                         `}
-                        >
-                          {item.ExecutionStatusName}
-                        </span>
-                      </div>
-
-                      <h3 className="text-sm font-semibold">
-                        [TC:{item.TestCaseId}] {item.Name}
-                      </h3>
+                      >
+                        {item.ExecutionStatusName}
+                      </span>
                     </div>
-                    <div className="flex">
-                      <h3 className="text-sm font-semibold">
-                        Ultima ejecución: {lastDate}
-                      </h3>
-                      {/* <ChevronRightIcon
+
+                    <h3 className="text-sm font-semibold">
+                      [TC:{item.TestCaseId}] {item.Name}
+                    </h3>
+                  </div>
+                  <div className="flex">
+                    <h3 className="text-sm font-semibold">
+                      Ultima ejecución: {lastDate}
+                    </h3>
+                    {/* <ChevronRightIcon
                       className="ml-4 h-5 w-5 flex-none text-gray-400"
                       aria-hidden="true"
                     /> */}
-                    </div>
-                  </UiCard>
-                </label>
-              </li>
-            </>
+                  </div>
+                </UiCard>
+              </label>
+            </li>
           );
         })}
       </ul>

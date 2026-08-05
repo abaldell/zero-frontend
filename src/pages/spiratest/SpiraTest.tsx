@@ -7,14 +7,30 @@ import { SidebarProjectId } from "./components/SidebarProjectId";
 import { DetailsTestSet } from "./components/detailsTestSet/DetailsTestSet";
 import { Spinner } from "flowbite-react";
 import NavSpiratest from "./components/NavSpiratest";
+import { executionService } from "../../services/execution.service";
+import { useNavigate } from "react-router-dom";
+import { useExecutionStore } from "../../store/executionStore";
+import type { TestPW } from "../../types/playwright";
 
 export default function SpiraTestPage() {
+  const navigate = useNavigate();
+
   const [testSets, setTestSets] = useState<SpiraTestSet[]>([]);
   const [testSetId, setTestSetId] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
+  const [spiraTestCases, setSpiraTestCases] = useState<TestPW[]>([]);
 
   const open = useNavStore((state) => state.open);
   const openDrawer = useNavStore((state) => state.openDrawer);
+  const reset = useExecutionStore((state) => state.reset);
+
+  const setLoadingExecutions = useExecutionStore(
+    (state) => state.setLoadingExecutions,
+  );
+  const setTestExecutions = useExecutionStore(
+    (state) => state.setTestExecutions,
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -28,11 +44,31 @@ export default function SpiraTestPage() {
     loadData();
   }, []);
 
+  const runTests = async () => {
+    reset();
+    setTestExecutions([]);
+    navigate("/tests");
+
+    try {
+      await executionService.run({
+        selectedPaths,
+        spiraTestCases,
+      });
+    } catch (err) {
+      setLoadingExecutions(false);
+      console.log("Error: ", err);
+    }
+  };
+
   return (
     <div
       className={`flex  flex-col ${open ? "w-5/6" : "w-[95%]"} ${openDrawer ? "absolute top-0 right-0" : "relative"} transition-transform duration-300`}
     >
-      <NavSpiratest isFinished={true} />
+      <NavSpiratest
+        isFinished={true}
+        onRunTests={runTests}
+        showButton={spiraTestCases.length > 0}
+      />
       <div
         className={`flex gap-3 p-3 transition-transform duration-300 ${loading ? "items-center justify-center" : "items-stretch"} h-screen`}
       >
@@ -58,7 +94,11 @@ export default function SpiraTestPage() {
               className={`${testSetId ? "w-3/4" : "w-full"} custom-scroll overflow-y-auto dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900 transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 pt-0 rounded-md`}
             >
               {testSetId ? (
-                <DetailsTestSet testSelected={testSetId} />
+                <DetailsTestSet
+                  testSelected={testSetId}
+                  onSelectTestCase={setSpiraTestCases}
+                  onSelectPaths={setSelectedPaths}
+                />
               ) : (
                 <TestSet data={testSets} onSetId={setTestSetId} />
               )}

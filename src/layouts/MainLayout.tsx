@@ -56,6 +56,10 @@ export default function MainLayout() {
     source.onmessage = (event) => {
       const msg = JSON.parse(event.data);
 
+      if (msg.type === "execution-started") {
+        setTests([]);
+      }
+
       if (msg.totalTest) {
         setTotalExecutions(msg.totalTest);
       }
@@ -63,7 +67,6 @@ export default function MainLayout() {
       if (msg.type === "test-started" || msg.type === "test-finished") {
         setTests((prev) => {
           const copy = [...prev];
-
           const index = copy.findIndex((t) => t.id === msg.id);
 
           if (index >= 0) {
@@ -124,6 +127,8 @@ export default function MainLayout() {
   };
 
   const runTests = async () => {
+    setTests([]);
+    setTestExecutions([]);
     navigate("/tests");
 
     try {

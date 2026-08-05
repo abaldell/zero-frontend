@@ -1,4 +1,5 @@
 
+import type { TestPW } from '../types/playwright';
 import { getApiExecutions } from '../utils/Utils';
 import { api } from './api';
 
@@ -15,7 +16,8 @@ export const executionService = {
 
   run(data: {
     selectedPaths: string[];
-    selectedScriptKeys: string[];
+    selectedScriptKeys?: string[];
+    spiraTestCases?: TestPW[];
   }) {
     return api.post(
       `${urlApi}/run`,

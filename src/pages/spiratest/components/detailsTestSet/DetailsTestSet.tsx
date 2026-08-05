@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getCasesTestSet,
   getDetailTestSet,
@@ -13,10 +13,12 @@ import type { TestPW } from "../../../../types/playwright";
 
 interface DetailsTestSetProps {
   testSelected: number;
+  onSelectTestCase: (testCases: TestPW[]) => void;
+  onSelectPaths: (paths: string[]) => void;
 }
 
 export const DetailsTestSet = (props: DetailsTestSetProps) => {
-  const { testSelected } = props;
+  const { testSelected, onSelectTestCase, onSelectPaths } = props;
   const [details, setDetails] = useState<TestSet>({} as TestSet);
   const [casesTest, setCasesTest] = useState<CaseTestSet[]>([]);
   const [statsDetails, setStatsDetails] = useState<Stats>({} as Stats);
@@ -74,7 +76,7 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
         <Spinner color="info" aria-label="Extra large Info spinner" size="xl" />
       ) : (
         <>
-          <div className="sticky top-0 left-0 flex items-center justify-between bg-slate-900 z-50 p-3">
+          <div className="sticky top-0 left-0 flex items-center justify-between bg-slate-900 z-40 p-3">
             <div>
               <h1 className="text-xl font-bold">{details.Name}</h1>
             </div>
@@ -108,7 +110,12 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
             </div>
           </div>
           <StatsTestSet stats={statsDetails} />
-          <CasesTestSet casesTest={casesTest} testPW={testPW} />
+          <CasesTestSet
+            casesTest={casesTest}
+            testPW={testPW}
+            onSelectTestCase={onSelectTestCase}
+            onSelectPaths={onSelectPaths}
+          />
         </>
       )}
     </div>

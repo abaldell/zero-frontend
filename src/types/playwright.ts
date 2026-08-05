@@ -24,5 +24,6 @@ export interface TestRunSummary {
 }
 
 export interface TestPW{
-  testCaseId:number
+  id:number,
+  path: string
 }
