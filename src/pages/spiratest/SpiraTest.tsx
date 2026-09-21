@@ -35,7 +35,7 @@ export default function SpiraTestPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await getAllTestTree(1);
+        const data = await getAllTestTree(import.meta.env.VITE_API_PROYECT);
         setTestSets(data);
       } finally {
         setLoading(false);
@@ -47,7 +47,7 @@ export default function SpiraTestPage() {
   const runTests = async () => {
     reset();
     setTestExecutions([]);
-    navigate("/tests");
+    navigate("/tests/execution");
 
     try {
       await executionService.run({

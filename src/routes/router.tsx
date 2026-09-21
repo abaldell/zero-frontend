@@ -21,6 +21,10 @@ export const router = createBrowserRouter([
         path: "/testset",
         element: <SpiraTestPage />,
       },
+      {
+        path: "/tests/execution",
+        element: <TestsPage isExecution={true} />,
+      },
     ],
   },
 ]);

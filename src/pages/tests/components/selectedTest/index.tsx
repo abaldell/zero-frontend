@@ -49,23 +49,19 @@ export const SelectTests = (props: SelectTestsProps) => {
   );
 
   const toggleScriptKey = (key: string) => {
-    setSelectedScriptKeys((current) => {
-      const newScript = current.includes(key)
-        ? current.filter((item) => item !== key)
-        : [...current, key];
-      onSelectScript(newScript);
-      return newScript;
-    });
+    const newScript = selectedScriptKeys.includes(key)
+      ? selectedScriptKeys.filter((item) => item !== key)
+      : [...selectedScriptKeys, key];
+    setSelectedScriptKeys(newScript);
+    onSelectScript(newScript);
   };
 
   const togglePath = (path: string) => {
-    setSelectedPaths((current) => {
-      const newPaths = current.includes(path)
-        ? current.filter((item) => item !== path)
-        : [...current, path];
-      onSelectPath(newPaths);
-      return newPaths;
-    });
+    const newPaths = selectedPaths.includes(path)
+      ? selectedPaths.filter((item) => item !== path)
+      : [...selectedPaths, path];
+    setSelectedPaths(newPaths);
+    onSelectPath(newPaths);
   };
 
   const handleRun = async () => {

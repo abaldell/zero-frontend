@@ -58,6 +58,9 @@ export default function MainLayout() {
 
       if (msg.type === "execution-started") {
         setTests([]);
+        setTestExecutions([]);
+        setFinishedExecutions(false);
+        setLoadingExecutions(true);
       }
 
       if (msg.totalTest) {
@@ -77,17 +80,15 @@ export default function MainLayout() {
           } else {
             copy.push(msg);
           }
-          setTestExecutions(copy);
           return copy;
         });
       }
 
       switch (msg.type) {
-        case "execution-started":
-          setLoadingExecutions(true);
-          break;
-
         case "execution-finished":
+          if (msg.result) {
+            setSummaryExecutions(msg.result);
+          }
           setFinishedExecutions(true);
           setLoadingExecutions(false);
           break;
@@ -97,8 +98,6 @@ export default function MainLayout() {
           break;
 
         case "finished":
-          setLoadingExecutions(false);
-          setFinishedExecutions(true);
           break;
       }
     };
@@ -106,14 +105,17 @@ export default function MainLayout() {
     return () => source.close();
   }, []);
 
-  const changeProgress = () => {
+  const changeProgress = (currentTests: TestResult[]) => {
     if (!totalTestsStore) {
       setProgressExecutions(0);
       return;
     }
 
-    const completed = testsStore.filter(
-      (t) => t.status === "passed" || t.status === "failed",
+    const completed = currentTests.filter(
+      (t) =>
+        t.status === "passed" ||
+        t.status === "failed" ||
+        t.status === "skipped",
     ).length;
     const progressPercentage = Math.round((completed / totalTestsStore) * 100);
     setProgressExecutions(progressPercentage);
@@ -143,18 +145,21 @@ export default function MainLayout() {
 
   useEffect(() => {
     if (tests.length > 0) {
+      setTestExecutions(tests);
       const durationTest = tests.reduce((acc, t) => acc + (t.duration ?? 0), 0);
       setDurationExecutions(durationTest);
-      changeProgress();
+      changeProgress(tests);
     }
-  }, [tests]);
+  }, [tests, setTestExecutions]);
 
   useEffect(() => {
     if (isFinishedStore) {
-      readResults(testsStore);
+      readResults(testsStore).catch((error) =>
+        console.error("Error al cargar el reporte:", error),
+      );
       setOpenNav(false);
     }
-  }, [isFinishedStore]);
+  }, [isFinishedStore, testsStore]);
 
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", openDrawer);

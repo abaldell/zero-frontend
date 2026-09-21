@@ -4,14 +4,14 @@ export interface ReporterStep {
   parent?: string;
   error?: string;
   duration?: number;
-  status?:string;
+  status:string;
 }
 
 export interface TestStepNode {
   title: string;
   duration?: number;
   category?: string;
-  status?:string;
+  status:string;
   error?: string;
   children: TestStepNode[];
 }

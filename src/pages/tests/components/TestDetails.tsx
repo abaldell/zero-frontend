@@ -1,49 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CircleIcon, Clock, FolderOpen } from "lucide-react";
 import { today } from "../../../utils/Utils";
 import Popup from "../../../components/ui/UiPopup";
-import type { TestAttachment, TestResult } from "../../../types/test.type";
+import type { TestResult } from "../../../types/test.type";
 import { UiAccordion } from "../../../components/ui";
 import TraceCard from "../../../components/cards/TraceCard";
+import { useExecutionStore } from "../../../store/executionStore";
+import type { PwExecution } from "../../../types/playwright";
 
 interface TestDetailProps {
   test: TestResult;
+  executeDetail?: PwExecution;
 }
 const TestDetail = (props: TestDetailProps) => {
-  const { test } = props;
-  const [traceTest, setTraceTest] = useState<TestAttachment>();
-  const [screenShot, setScreenShot] = useState<TestAttachment>();
-  const [video, setVideo] = useState<TestAttachment>();
+  const { test, executeDetail } = props;
+  const updateExecuteSpiraStep = useExecutionStore(
+    (state) => state.updateExecuteSpiraStep,
+  );
+  console.log("test", test);
+  const traceTest = test.attachments.find((a) => a.name === "trace");
+  const screenShot = test.attachments.find((a) => a.name === "screenshot");
+  const video = test.attachments.find((a) => a.name === "video");
   const [openImage, setOpenImage] = useState(false);
   const [openVideo, setOpenVideo] = useState(false);
 
-  const getAttachments = () => {
-    getTestTrace();
-    getTestScreen();
-    getTestVideo();
+  console.log("executeDetail", executeDetail);
+
+  const changeExecuteSpira = (value: string, stepIndex: number) => {
+    if (!executeDetail) return;
+    updateExecuteSpiraStep(executeDetail.spiraTestCaseId, stepIndex, value);
   };
-
-  const getTestTrace = () => {
-    const trace = test.attachments.find((a) => a.name === "trace");
-    setTraceTest(trace);
-  };
-
-  const getTestScreen = () => {
-    const screen = test.attachments.find((a) => a.name === "screenshot");
-    setScreenShot(screen);
-  };
-
-  const getTestVideo = () => {
-    const video = test.attachments.find((a) => a.name === "video");
-    setVideo(video);
-  };
-
-  useEffect(() => {
-    if (test.attachments) {
-      getAttachments();
-    }
-  }, [test]);
-
   return (
     <div className=" text-black/70 dark:text-white">
       <div className="mx-auto  space-y-6 p-6">
@@ -104,8 +90,21 @@ const TestDetail = (props: TestDetailProps) => {
 
         <div className="my-3">
           {test.steps &&
-            test.steps.map((step) => (
-              <UiAccordion key={step.id} step={step} level={0} />
+            test.steps.map((step, i) => (
+              <>
+                <UiAccordion key={step.id} step={step} level={0} />
+                {executeDetail && (
+                  <textarea
+                    className="w-full min-h-36 rounded-md shadow ring-1 ring-inset ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-900 p-3"
+                    id={`${test.id}-${i.toString()}`}
+                    defaultValue={executeDetail.steps[i]?.actualResult}
+                    onChange={(text) =>
+                      changeExecuteSpira(text.target.value, i)
+                    }
+                    key={test.id}
+                  />
+                )}
+              </>
             ))}
         </div>
 

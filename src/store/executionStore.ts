@@ -1,7 +1,7 @@
 
 import { create } from 'zustand';
 import type { TestResult } from '../types/test.type';
-import type { TestRunSummary as Summary } from "../types/playwright";
+import type { TestRunSummary as Summary, PwExecution } from "../types/playwright";
 
 interface ExecutionStore {
   isFinishedStore: boolean,
@@ -12,6 +12,7 @@ interface ExecutionStore {
   progressStore: number,
   testsStore: TestResult[],
   resultTestStore: Record<string, TestResult[]>
+  executeSpira: PwExecution[];
 
   setTestExecutions: (testsExecutions: TestResult[]) => void;
   setLoadingExecutions:(loading:boolean) => void;
@@ -21,6 +22,8 @@ interface ExecutionStore {
   setTotalExecutions:(total:number) => void;
   setSummaryExecutions:(summary:Summary) => void;
   setResultTestExecutions:(tests:Record<string, TestResult[]>) => void
+  setExecuteSpira: (executeSpira: PwExecution[]) => void;
+  updateExecuteSpiraStep: (testCaseId: string, stepIndex: number, error: string) => void;
   reset: ()=> void;
 }
 
@@ -34,6 +37,7 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
   progressStore: 0,
   testsStore: [],
   resultTestStore: {},
+  executeSpira: [],
 
   setTestExecutions:(execution) => 
     set({testsStore:execution}),
@@ -59,6 +63,23 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
    setResultTestExecutions:(tests) => 
     set({resultTestStore: tests}),
 
+  setExecuteSpira:(executeSpira) =>
+    set({ executeSpira }),
+
+  updateExecuteSpiraStep:(testCaseId, stepIndex, result) =>
+    set((state) => ({
+      executeSpira: state.executeSpira.map((execution) =>
+        execution.spiraTestCaseId !== testCaseId
+          ? execution
+          : {
+              ...execution,
+              steps: execution.steps.map((step, index) =>
+                index === stepIndex ? { ...step, actualResult: result } : step,
+              ),
+            },
+      ),
+    })),
+
   reset: () =>
     set({
       isFinishedStore: false,
@@ -69,5 +90,6 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
       progressStore: 0,
       testsStore: [],
       resultTestStore: {},
+      executeSpira: [],
     }),
 }));

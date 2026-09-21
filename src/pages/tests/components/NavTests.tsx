@@ -1,3 +1,4 @@
+import { Play } from "lucide-react";
 import { UiNavHorizontal } from "../../../components/ui";
 
 interface NavTestsProps {
@@ -5,9 +6,13 @@ interface NavTestsProps {
   isLoading: boolean;
   totalTests: number;
   numTest: number;
+  isExecution: boolean;
 }
 const NavTests = (props: NavTestsProps) => {
-  const { isFinished, isLoading, totalTests, numTest } = props;
+  const { isFinished, isLoading, totalTests, numTest, isExecution } = props;
+  const runExecuteTestSet = () => {
+    console.log("run");
+  };
   return (
     <UiNavHorizontal>
       <div className="flex w-full justify-end items-center">
@@ -21,6 +26,15 @@ const NavTests = (props: NavTestsProps) => {
             >
               {isFinished ? "Finalizado" : "Ejecutando..."}
             </span>
+            {isExecution && isFinished && (
+              <button
+                className="flex items-center gap-3 dark:bg-teal-500 dark:text-white rounded-md py-1 px-3 dark:disabled:bg-slate-500 disabled:bg-slate-500"
+                onClick={runExecuteTestSet}
+              >
+                <Play size={20} />
+                Reportar pruebas
+              </button>
+            )}
           </div>
         )}
       </div>

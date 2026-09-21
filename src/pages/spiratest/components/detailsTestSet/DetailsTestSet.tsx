@@ -29,8 +29,14 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
     if (testSelected) {
       const loadData = async () => {
         try {
-          const data = await getDetailTestSet(1, testSelected);
-          const dataCases = await getCasesTestSet(1, testSelected);
+          const data = await getDetailTestSet(
+            import.meta.env.VITE_API_PROYECT,
+            testSelected,
+          );
+          const dataCases = await getCasesTestSet(
+            import.meta.env.VITE_API_PROYECT,
+            testSelected,
+          );
           const dataTestPW = await getTestPW();
 
           setDetails(data);
@@ -69,7 +75,7 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
       loadData();
     }
   }, [testSelected]);
-
+  console.log("statsDetails", statsDetails);
   return (
     <div className={`${loading ? "flex items-center justify-center" : ""}`}>
       {loading ? (

@@ -6,6 +6,9 @@ import { getApiFiles, getApiResults } from "./Utils";
 
 export async function loadPlaywrightResults() {
     const results = await fetch(getApiResults());
+    if (!results.ok) {
+        throw new Error(`No se pudo cargar el reporte: ${results.status}`);
+    }
     const data = await results.json();
     return data;
 }
@@ -27,6 +30,10 @@ function collectSpecs(suite: any,specs: any[] = []): any[] {
 
 export function getAllSpecs(report: any) {
     const specs: any[] = [];
+    if (!Array.isArray(report?.suites)) {
+        return specs;
+    }
+
     report.suites.forEach((suite: any) => {
         collectSpecs(suite, specs);
     });
@@ -75,7 +82,7 @@ function buildStepTree(step: ReporterStep | TestStepNode, allSteps: TestResult[]
                 title: s.title,
                 category: s.category,
                 error:s.error?.message,
-                status: s.status,
+                status: s.status ?? "",
                 duration: s.duration,
                 children: [],
             },
@@ -97,8 +104,7 @@ export function buildResultsMap(report: any, test: TestResult[]) {
         continue;
         }
 
-        const lastResult =
-        run.results?.[run.results.length - 1];
+        const lastResult = run.results?.[run.results.length - 1];
 
         const subTest = test.find(val => val.title === spec.title)
         const executionSteps = subTest?.steps ?? [];
@@ -108,10 +114,10 @@ export function buildResultsMap(report: any, test: TestResult[]) {
         title: spec.title,
         file: spec.file,
         project: run.projectName,
-        status: lastResult?.status,
+        status: lastResult?.status ?? run.expectedStatus ?? "skipped",
         duration: lastResult?.duration,
         retries: run.results?.length - 1 || 0,
-        error: lastResult?.error?.message.replace(/\x1B\[[0-9;]*m/g, ""),
+        error: lastResult?.error?.message?.replace(/\x1B\[[0-9;]*m/g, ""),
         steps:lastResult?.steps?.map((step: ReporterStep) =>
                 buildStepTree(step, executionSteps)
             ) ?? [],
