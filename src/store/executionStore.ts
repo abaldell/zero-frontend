@@ -74,7 +74,7 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
           : {
               ...execution,
               steps: execution.steps.map((step, index) =>
-                index === stepIndex ? { ...step, actualResult: result } : step,
+                index === stepIndex ? { ...step, actualResult: result} : step,
               ),
             },
       ),

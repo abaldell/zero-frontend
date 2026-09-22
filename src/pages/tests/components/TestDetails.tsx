@@ -7,6 +7,7 @@ import { UiAccordion } from "../../../components/ui";
 import TraceCard from "../../../components/cards/TraceCard";
 import { useExecutionStore } from "../../../store/executionStore";
 import type { PwExecution } from "../../../types/playwright";
+import { Select } from "flowbite-react";
 
 interface TestDetailProps {
   test: TestResult;
@@ -17,7 +18,7 @@ const TestDetail = (props: TestDetailProps) => {
   const updateExecuteSpiraStep = useExecutionStore(
     (state) => state.updateExecuteSpiraStep,
   );
-  console.log("test", test);
+
   const traceTest = test.attachments.find((a) => a.name === "trace");
   const screenShot = test.attachments.find((a) => a.name === "screenshot");
   const video = test.attachments.find((a) => a.name === "video");
@@ -30,6 +31,7 @@ const TestDetail = (props: TestDetailProps) => {
     if (!executeDetail) return;
     updateExecuteSpiraStep(executeDetail.spiraTestCaseId, stepIndex, value);
   };
+
   return (
     <div className=" text-black/70 dark:text-white">
       <div className="mx-auto  space-y-6 p-6">
@@ -94,15 +96,26 @@ const TestDetail = (props: TestDetailProps) => {
               <>
                 <UiAccordion key={step.id} step={step} level={0} />
                 {executeDetail && (
-                  <textarea
-                    className="w-full min-h-36 rounded-md shadow ring-1 ring-inset ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-900 p-3"
-                    id={`${test.id}-${i.toString()}`}
-                    defaultValue={executeDetail.steps[i]?.actualResult}
-                    onChange={(text) =>
-                      changeExecuteSpira(text.target.value, i)
-                    }
-                    key={test.id}
-                  />
+                  <div>
+                    <div className="flex justify-between">
+                      <h3>Reporte step</h3>
+                      <Select>
+                        <option>Passed</option>
+                        <option>Failed</option>
+                        <option>Blocked</option>
+                        <option>Caution</option>
+                      </Select>
+                    </div>
+                    <textarea
+                      className="w-full min-h-36 rounded-md shadow ring-1 ring-inset ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-900 p-3"
+                      id={`${test.id}-${i.toString()}`}
+                      defaultValue={executeDetail.steps[i]?.actualResult}
+                      onChange={(text) =>
+                        changeExecuteSpira(text.target.value, i)
+                      }
+                      key={test.id}
+                    />
+                  </div>
                 )}
               </>
             ))}

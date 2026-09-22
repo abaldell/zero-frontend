@@ -7,7 +7,7 @@ export const TraceCard = (props: TraceCardProps) => {
   const { traceUrl } = props;
   if (!traceUrl) return null;
 
-  const traceViewerUrl = `http://localhost:9323/trace/index.html?trace=${encodeURIComponent(traceUrl)}`;
+  const traceViewerUrl = `https://trace.playwright.dev/?trace=${encodeURIComponent(traceUrl)}`;
   return (
     <a
       href={traceViewerUrl}
