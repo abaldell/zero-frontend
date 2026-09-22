@@ -5,42 +5,25 @@ import type { ScriptSet, TestFileNode } from "../../../../types/playwright";
 import { TestFieldList } from "./TestFieldList";
 import { TestScriptsList } from "./TestScriptsList";
 import { getApiTestSuite } from "../../../../utils/Utils";
+import { useNavStore } from "../../../../store/navStore";
 
 const API_SUITES = getApiTestSuite();
 
 interface SelectTestsProps {
   isLoading: boolean;
-  onOpenDrawer: (open: boolean) => void;
   onRun: () => void;
-  onError: (error: string | null) => void;
   onSelectPath: (path: string[]) => void;
   onSelectScript: (script: string[]) => void;
 }
 export const SelectTests = (props: SelectTestsProps) => {
-  const {
-    onOpenDrawer,
-    onRun,
-    onError,
-    isLoading,
-    onSelectPath,
-    onSelectScript,
-  } = props;
+  const { onRun, isLoading, onSelectPath, onSelectScript } = props;
+  const setOpenDrawer = useNavStore((state) => state.setOpenDrawer);
   const [scriptSets, setScriptSets] = useState<ScriptSet[]>([]);
   const [testTree, setTestTree] = useState<TestFileNode[]>([]);
   const [selectedScriptKeys, setSelectedScriptKeys] = useState<string[]>([]);
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
 
-  useEffect(() => {
-    fetchSuites();
-  }, []);
-
-  const selectedCount = useMemo(
-    () => selectedScriptKeys.length + selectedPaths.length,
-    [selectedScriptKeys, selectedPaths],
-  );
-
   const fetchSuites = async () => {
-    onError(null);
     try {
       const response = await fetch(API_SUITES);
       if (!response.ok) {
@@ -50,38 +33,44 @@ export const SelectTests = (props: SelectTestsProps) => {
       setScriptSets(payload.scriptSets ?? []);
       setTestTree(payload.testTree ?? []);
     } catch (err) {
-      onError((err as Error).message);
+      console.log("error: ", err);
     }
   };
+  useEffect(() => {
+    const suites = async () => {
+      await fetchSuites();
+    };
+    suites();
+  }, []);
+
+  const selectedCount = useMemo(
+    () => selectedScriptKeys.length + selectedPaths.length,
+    [selectedScriptKeys, selectedPaths],
+  );
 
   const toggleScriptKey = (key: string) => {
-    setSelectedScriptKeys((current) => {
-      const newScript = current.includes(key)
-        ? current.filter((item) => item !== key)
-        : [...current, key];
-      onSelectScript(newScript);
-      return newScript;
-    });
+    const newScript = selectedScriptKeys.includes(key)
+      ? selectedScriptKeys.filter((item) => item !== key)
+      : [...selectedScriptKeys, key];
+    setSelectedScriptKeys(newScript);
+    onSelectScript(newScript);
   };
 
   const togglePath = (path: string) => {
-    setSelectedPaths((current) => {
-      const newPaths = current.includes(path)
-        ? current.filter((item) => item !== path)
-        : [...current, path];
-      debugger;
-      onSelectPath(newPaths);
-      return newPaths;
-    });
+    const newPaths = selectedPaths.includes(path)
+      ? selectedPaths.filter((item) => item !== path)
+      : [...selectedPaths, path];
+    setSelectedPaths(newPaths);
+    onSelectPath(newPaths);
   };
 
   const handleRun = async () => {
-    onOpenDrawer(false);
+    setOpenDrawer(false);
     onRun();
   };
 
   return (
-    <DrawerRelative setOpenDrawer={(open) => onOpenDrawer(open)}>
+    <DrawerRelative>
       <ActionsSelectedTest
         fetchSuites={fetchSuites}
         selectedCount={selectedCount}
@@ -90,7 +79,7 @@ export const SelectTests = (props: SelectTestsProps) => {
       />
 
       <div className="flex-1 min-h-0 p-3 rounded-md border border-slate-100/90 bg-slate-100 dark:border-slate-800/90 dark:bg-slate-900/80 shadow-panel">
-        <div className="h-full custom-scroll overflow-y-auto  pr-3">
+        <div className="h-full custom-scroll overflow-y-auto pr-3 dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900">
           <TestFieldList
             testTree={testTree}
             selectedPaths={selectedPaths}
@@ -99,7 +88,7 @@ export const SelectTests = (props: SelectTestsProps) => {
         </div>
       </div>
       <div className="flex-1 min-h-0 p-3 rounded-md border border-slate-100/90 bg-slate-100 dark:border-slate-800/90 dark:bg-slate-900/80 shadow-panel">
-        <div className="h-full custom-scroll overflow-y-auto pr-3">
+        <div className="h-full custom-scroll overflow-y-auto pr-3 dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900">
           <TestScriptsList
             scriptSets={scriptSets}
             selectedScriptKeys={selectedScriptKeys}

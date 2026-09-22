@@ -1,23 +1,18 @@
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
-interface PopupProps {
+interface UiPopupProps {
   children: React.ReactNode;
-  openImage: boolean;
-  onCloseImage: (close: boolean) => void;
+  open: boolean;
+  onClose: (close: boolean) => void;
 }
-export default function Popup(props: PopupProps) {
-  const { children, openImage, onCloseImage } = props;
+export default function UiPopup(props: UiPopupProps) {
+  const { children, open, onClose } = props;
 
   return (
     <div>
       <Dialog
-        open={openImage}
-        onClose={() => onCloseImage(false)}
+        open={open}
+        onClose={() => onClose(false)}
         className="relative z-10"
       >
         <DialogBackdrop

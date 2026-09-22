@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Guía de usuario de ZeroApp: ejecución y análisis de pruebas Playwright y SpiraTest.">
+  <title>ZeroApp · Guía de usuario</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #fff;
+      --surface-muted: #eef2f8;
+      --text: #172033;
+      --muted: #63708a;
+      --line: #dce3ef;
+      --primary: #315bea;
+      --primary-dark: #2445b7;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 16px 40px rgba(30, 48, 90, .09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--primary-dark); }
+    .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 22px;
+      color: #eaf0ff;
+      background: #111a35;
+    }
+    .brand { display: flex; gap: 12px; align-items: center; margin-bottom: 34px; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, #5578ff, #6d40d9);
+    }
+    .brand strong { display: block; font-size: 1.15rem; }
+    .brand small { color: #aebbe0; }
+    .toc-title { margin: 0 0 10px; color: #92a3d0; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
+    nav a {
+      display: block;
+      padding: 8px 11px;
+      border-radius: 8px;
+      color: #dbe4ff;
+      font-size: .94rem;
+      text-decoration: none;
+    }
+    nav a:hover { color: white; background: rgba(255,255,255,.1); }
+    main { width: min(1120px, 100%); padding: 48px clamp(22px, 5vw, 72px) 80px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(30px, 6vw, 64px);
+      border: 1px solid #d9e2ff;
+      border-radius: 24px;
+      color: white;
+      background: radial-gradient(circle at 90% 10%, #6c7eff 0, transparent 34%), linear-gradient(135deg, #2447c7, #16255d 78%);
+      box-shadow: var(--shadow);
+    }
+    .eyebrow { margin: 0 0 10px; color: #bfcaff; font-size: .8rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { max-width: 720px; margin: 0 0 18px; font-size: clamp(2.1rem, 5vw, 4rem); letter-spacing: -.04em; }
+    .hero p { max-width: 720px; margin: 0; color: #e0e7ff; font-size: 1.12rem; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .pill { padding: 5px 11px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; color: #eef2ff; background: rgba(255,255,255,.1); font-size: .85rem; }
+    section { margin-top: 48px; scroll-margin-top: 24px; }
+    h2 { margin: 0 0 16px; font-size: 1.85rem; letter-spacing: -.025em; }
+    h3 { margin: 22px 0 8px; font-size: 1.15rem; }
+    .lead { color: var(--muted); font-size: 1.05rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card, .notice, table { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 8px 24px rgba(30, 48, 90, .04); }
+    .card { padding: 21px; }
+    .card h3 { margin-top: 0; }
+    .card p { margin-bottom: 0; color: var(--muted); }
+    .steps { counter-reset: step; display: grid; gap: 12px; margin: 18px 0; padding: 0; list-style: none; }
+    .steps li { position: relative; min-height: 50px; padding: 12px 16px 12px 58px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; top: 11px; left: 16px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: white; font-weight: 700; background: var(--primary); }
+    .notice { padding: 17px 20px; margin: 18px 0; border-left: 4px solid var(--primary); }
+    .notice.warning { border-left-color: var(--warning); }
+    .notice strong { display: block; margin-bottom: 3px; }
+    ul { padding-left: 23px; }
+    table { width: 100%; overflow: hidden; border-spacing: 0; border-collapse: separate; }
+    th, td { padding: 12px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #394665; background: var(--surface-muted); font-size: .9rem; }
+    tr:last-child td { border-bottom: 0; }
+    code { padding: 2px 6px; border-radius: 5px; color: #30438f; background: #edf1ff; font-size: .9em; }
+    .state { display: inline-flex; align-items: center; gap: 7px; margin: 3px 8px 3px 0; padding: 5px 10px; border-radius: 999px; background: var(--surface-muted); font-size: .9rem; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+    .passed .dot { background: var(--accent); } .failed .dot { background: var(--danger); } .running .dot { background: var(--primary); } .skipped .dot { background: var(--warning); }
+    footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+    @media (max-width: 800px) {
+      .layout { display: block; }
+      aside { position: static; height: auto; padding: 20px; }
+      nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
+      .brand { margin-bottom: 20px; }
+      main { padding-top: 24px; }
+    }
+    @media (max-width: 480px) { nav { grid-template-columns: 1fr; } th, td { padding: 10px; } }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">Z</div>
+        <div><strong>ZeroApp</strong><small>Guía de usuario</small></div>
+      </div>
+      <p class="toc-title">Contenido</p>
+      <nav aria-label="Tabla de contenidos">
+        <a href="#inicio">Introducción</a>
+        <a href="#interfaz">Conocer la interfaz</a>
+        <a href="#ejecucion">Ejecutar pruebas</a>
+        <a href="#resultados">Consultar resultados</a>
+        <a href="#detalle">Analizar una prueba</a>
+        <a href="#spiratest">Trabajar con SpiraTest</a>
+        <a href="#estados">Estados y leyenda</a>
+        <a href="#requisitos">Requisitos y limitaciones</a>
+        <a href="#ayuda">Resolución de problemas</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero" id="inicio">
+        <p class="eyebrow">Documentación del producto</p>
+        <h1>Ejecuta, supervisa y analiza tus pruebas</h1>
+        <p>ZeroApp centraliza la selección de pruebas Playwright, la ejecución en tiempo real y la consulta de evidencias. También permite trabajar con conjuntos y casos de prueba procedentes de SpiraTest.</p>
+        <div class="hero-meta"><span class="pill">Playwright</span><span class="pill">SpiraTest</span><span class="pill">Resultados en tiempo real</span></div>
+      </header>
+
+      <section id="interfaz">
+        <h2>Conocer la interfaz</h2>
+        <p class="lead">La aplicación está organizada para que puedas pasar de la selección a la ejecución sin perder el contexto.</p>
+        <div class="grid">
+          <article class="card"><h3>Barra lateral</h3><p>Abre o contrae la navegación, accede al Dashboard, entra en los conjuntos de tests y cambia entre tema claro y oscuro.</p></article>
+          <article class="card"><h3>Ejecutar Tests</h3><p>Abre el panel lateral desde el que se seleccionan carpetas, archivos y scripts de Playwright.</p></article>
+          <article class="card"><h3>Vista de ejecución</h3><p>Muestra el progreso, el resumen y la lista de resultados agrupada por archivo.</p></article>
+          <article class="card"><h3>Conjunto de tests</h3><p>Permite consultar conjuntos de SpiraTest, revisar sus estadísticas y lanzar casos automatizados.</p></article>
+        </div>
+        <div class="notice"><strong>Consejo</strong>Si la barra lateral ocupa demasiado espacio, utiliza el control de colapsar. El tema elegido se conserva para próximas visitas en el mismo navegador.</div>
+      </section>
+
+      <section id="ejecucion">
+        <h2>Ejecutar pruebas Playwright</h2>
+        <p>Utiliza este flujo para ejecutar una selección directa de suites y scripts.</p>
+        <ol class="steps">
+          <li>Selecciona <strong>Ejecutar Tests</strong> en la barra lateral.</li>
+          <li>En el árbol de suites, expande las carpetas y marca una carpeta o un archivo. Puedes seleccionar varios elementos.</li>
+          <li>Marca los scripts que quieras ejecutar en la lista de scripts disponibles.</li>
+          <li>Revisa la selección y pulsa <strong>Ejecutar selección</strong>. Para volver a cargar el contenido, usa <strong>Recargar suites</strong>.</li>
+          <li>La aplicación cerrará el panel y abrirá la pantalla de pruebas. Mantén la página abierta para recibir el progreso.</li>
+        </ol>
+        <div class="notice warning"><strong>Antes de ejecutar</strong>Comprueba que el backend esté disponible y que la selección contenga al menos una ruta o script válido. Las carpetas pueden incluir varios archivos, por lo que una selección amplia puede generar una ejecución más larga.</div>
+      </section>
+
+      <section id="resultados">
+        <h2>Consultar una ejecución</h2>
+        <div class="grid">
+          <article class="card"><h3>Progreso</h3><p>El contador indica las pruebas completadas frente al total. La barra visualiza el avance de las pruebas pasadas y fallidas.</p></article>
+          <article class="card"><h3>Estado</h3><p>Durante la ejecución aparece <strong>Ejecutando...</strong>. Cuando termina, el estado cambia a <strong>Finalizado</strong>.</p></article>
+          <article class="card"><h3>Resumen</h3><p>Al finalizar se muestran las pruebas pasadas, fallidas, omitidas y la duración total en segundos.</p></article>
+        </div>
+        <h3>Lista de resultados</h3>
+        <p>Los resultados se agrupan por archivo. Selecciona una tarjeta para abrir el detalle de una prueba. El color de la tarjeta ayuda a localizar rápidamente los fallos y los resultados correctos.</p>
+        <div class="notice"><strong>Actualización en tiempo real</strong>Los cambios llegan mientras la ejecución está activa. Si se pierde la conexión con el servidor, el progreso puede dejar de actualizarse hasta recuperar la conexión.</div>
+      </section>
+
+      <section id="detalle">
+        <h2>Analizar el detalle de una prueba</h2>
+        <p>Selecciona una prueba de la lista para revisar su información completa:</p>
+        <div class="grid">
+          <article class="card"><h3>Información general</h3><p>Consulta el nombre, estado, archivo de origen, proyecto, identificador y duración.</p></article>
+          <article class="card"><h3>Pasos</h3><p>Expande cada paso para consultar su duración, estado, detalles y los pasos hijos.</p></article>
+          <article class="card"><h3>Errores</h3><p>En una prueba fallida se muestran el mensaje, el stack trace y, cuando existe, un fragmento de código relacionado.</p></article>
+          <article class="card"><h3>Evidencias</h3><p>Abre el screenshot desde la ventana emergente o accede al trace de Playwright mediante su visor.</p></article>
+        </div>
+        <h3>Recomendación para investigar fallos</h3>
+        <ol class="steps">
+          <li>Empieza por el primer paso marcado como fallido.</li>
+          <li>Expande sus detalles y revisa el mensaje y el stack trace.</li>
+          <li>Contrasta el error con el screenshot y el trace disponibles.</li>
+          <li>Utiliza el archivo de origen y el nombre de la prueba para localizar el caso en el proyecto.</li>
+        </ol>
+      </section>
+
+      <section id="spiratest">
+        <h2>Trabajar con SpiraTest</h2>
+        <p>La sección <strong>Conjunto de tests</strong> permite consultar conjuntos de pruebas y ejecutar los casos que tienen automatización Playwright asociada.</p>
+        <ol class="steps">
+          <li>Abre <strong>Conjunto de tests</strong> desde la barra lateral.</li>
+          <li>Revisa la tabla de conjuntos: identificador, nombre, estado, release y fecha de actualización.</li>
+          <li>Selecciona un conjunto para abrir su detalle y consultar sus estadísticas.</li>
+          <li>En la lista de casos, marca únicamente los casos que tengan correspondencia con una prueba automatizada disponible.</li>
+          <li>Pulsa <strong>Ejecutar pruebas</strong> para iniciar la ejecución y consulta sus resultados en la pantalla de ejecución.</li>
+        </ol>
+        <h3>Estadísticas del conjunto</h3>
+        <p>El detalle incluye un gráfico con casos pasados, fallidos, bloqueados, en precaución, no ejecutados y no aplicables. La barra de la tabla representa visualmente pasados, fallidos, no ejecutados y bloqueados.</p>
+        <div class="notice warning"><strong>Importante</strong>La selección solo está disponible para casos con automatización Playwright asociada. Los resultados editados en la pantalla no se publican actualmente de forma automática en SpiraTest.</div>
+      </section>
+
+      <section id="estados">
+        <h2>Estados y leyenda</h2>
+        <p>Los nombres pueden variar según el origen del resultado. Esta es la interpretación habitual:</p>
+        <div class="card">
+          <span class="state passed"><i class="dot"></i>Pasado</span>
+          <span class="state failed"><i class="dot"></i>Fallido</span>
+          <span class="state running"><i class="dot"></i>En ejecución</span>
+          <span class="state skipped"><i class="dot"></i>Omitido</span>
+          <span class="state"><i class="dot"></i>Bloqueado</span>
+          <span class="state"><i class="dot"></i>Precaución</span>
+          <span class="state"><i class="dot"></i>No ejecutado</span>
+          <span class="state"><i class="dot"></i>No aplicable</span>
+        </div>
+        <table>
+          <thead><tr><th>Estado</th><th>Qué significa</th><th>Qué hacer</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Pasado</strong></td><td>La prueba terminó correctamente.</td><td>No requiere acción, salvo validación funcional.</td></tr>
+            <tr><td><strong>Fallido</strong></td><td>Uno o más pasos no se completaron correctamente.</td><td>Revisar error, screenshot, trace y stack trace.</td></tr>
+            <tr><td><strong>Omitido</strong></td><td>La prueba no se ejecutó.</td><td>Comprobar la configuración y las condiciones de ejecución.</td></tr>
+            <tr><td><strong>Bloqueado</strong></td><td>El caso no puede avanzar por una dependencia o impedimento.</td><td>Resolver el bloqueo antes de volver a ejecutar.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="requisitos">
+        <h2>Requisitos y limitaciones conocidas</h2>
+        <ul>
+          <li>El backend debe estar disponible en la URL configurada para la aplicación.</li>
+          <li>Los screenshots, vídeos y traces dependen de que el backend sirva correctamente los archivos de evidencia.</li>
+          <li>El visor de traces utiliza actualmente <code>http://localhost:9323/trace/index.html</code>; debe ser accesible desde el navegador.</li>
+          <li>La integración usa actualmente el proyecto SpiraTest con identificador <code>1</code>.</li>
+          <li>El Dashboard existe como pantalla inicial, pero todavía no muestra información funcional completa.</li>
+          <li>La barra de progreso de la ejecución contabiliza principalmente estados pasados y fallidos; otros estados pueden no incrementar el porcentaje.</li>
+          <li>La actualización de resultados depende de los eventos en tiempo real del servidor.</li>
+        </ul>
+      </section>
+
+      <section id="ayuda">
+        <h2>Resolución de problemas</h2>
+        <table>
+          <thead><tr><th>Situación</th><th>Comprobaciones recomendadas</th></tr></thead>
+          <tbody>
+            <tr><td>No aparecen suites o scripts</td><td>Verifica el backend, la URL configurada y pulsa <strong>Recargar suites</strong>.</td></tr>
+            <tr><td>La ejecución no avanza</td><td>Comprueba la conexión con el servidor y que la página siga abierta.</td></tr>
+            <tr><td>No se ve una evidencia</td><td>Confirma que el archivo existe y que el backend expone la ruta de archivos.</td></tr>
+            <tr><td>El trace no se abre</td><td>Verifica que el visor esté disponible en el puerto 9323 y que no esté bloqueado por la red.</td></tr>
+            <tr><td>No se puede seleccionar un caso SpiraTest</td><td>El caso necesita una correspondencia con una prueba automatizada de Playwright.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer>ZeroApp · Documentación de usuario · Generada para la versión actual del frontend</footer>
+    </main>
+  </div>
+</body>
+</html>

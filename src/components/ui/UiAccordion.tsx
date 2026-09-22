@@ -1,14 +1,14 @@
 import { Check, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
-import { stripAnsi } from "../utils/Utils";
-import type { TestResult } from "../types/test.type";
+import { stripAnsi } from "../../utils/Utils";
+import type { TestResult } from "../../types/test.type";
 
-export interface AccordionProps {
+export interface UiAccordionProps {
   step: TestResult;
   level: number;
 }
 
-export const Accordion = (props: AccordionProps) => {
+export const UiAccordion = (props: UiAccordionProps) => {
   const { step, level } = props;
   const [open, setOpen] = useState(false);
 
@@ -24,8 +24,6 @@ export const Accordion = (props: AccordionProps) => {
             ? "border-green-600 bg-green-600/20"
             : "border-red-800 bg-red-800/20"
         }`}
-        // className="flex items-center justify-between py-2 hover:bg-slate-800"
-        // style={{ paddingLeft: `${level * 24 + 16}px` }}
       >
         <div className={`flex items-center gap-2 rounded-l-sm rounded-r-sm`}>
           {hasChildren ? (
@@ -34,7 +32,7 @@ export const Accordion = (props: AccordionProps) => {
               className={`transition-transform ${open ? "rotate-90" : ""}`}
             />
           ) : (
-            <div className="w-[14px]" />
+            <div className="w-3.5" />
           )}
 
           {!errorStep ? (
@@ -64,7 +62,7 @@ export const Accordion = (props: AccordionProps) => {
 
           {step.children?.map((child) => (
             <div className="ml-7">
-              <Accordion key={child.id} step={child} level={level + 1} />
+              <UiAccordion key={child.id} step={child} level={level + 1} />
             </div>
           ))}
 

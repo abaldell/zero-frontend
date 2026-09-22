@@ -22,3 +22,23 @@ export interface TestRunSummary {
   output: string;
   reportPath?: string;
 }
+
+export interface TestPW{
+  id:number,
+  path: string
+}
+
+export interface PwExecution {
+  spiraTestCaseId: string;
+  title: string;
+  status: string;
+  duration: number;
+  steps: PwStep[];
+}
+
+export interface PwStep {
+  name: string;
+  status: string;
+  actualResult: string;
+  error?: string;
+}

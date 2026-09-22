@@ -1,4 +1,5 @@
 export const stripAnsi = (text: string) =>
+  // eslint-disable-next-line no-control-regex
   text.replace(/\u001b\[[0-9;]*m/g, '');
 
 export const today = () =>{
@@ -9,6 +10,15 @@ export const today = () =>{
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  });
+}
+
+export const formatDate = (date:string) =>{
+  const format = new Date(date)
+  return format.toLocaleString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 }
 
@@ -30,4 +40,11 @@ export const getApiResults = () => {
 
 export const getApiFiles = () => {
   return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_FILES}`
+}
+
+export const getApiSpiraTest = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_SPIRATEST}`
+}
+export const getApiPW = () => {
+  return `${import.meta.env.VITE_API_BASE}${import.meta.env.VITE_API_PW}`
 }
