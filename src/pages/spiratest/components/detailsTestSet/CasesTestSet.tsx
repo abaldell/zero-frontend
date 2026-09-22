@@ -47,9 +47,12 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
       <ul role="list" className="divide-y divide-slate-700/50">
         {casesTest.map((item: CaseTestSet) => {
           const lastDate = formatDate(item.LastUpdateDate);
-          const isEnabled = testPW.find((test) => test.id === item.TestCaseId)
-            ? true
-            : false;
+          const isEnabled =
+            testPW.length > 0
+              ? testPW.find((test) => test.id === item.TestCaseId)
+                ? true
+                : false
+              : false;
           return (
             <li
               key={`case-${item.TestCaseId}`}
