@@ -1,4 +1,6 @@
 import { getApiSpiraTest } from "../utils/Utils";
+import { api } from "./api";
+import type { PwExecution } from "../types/playwright";
 
 const urlApi = getApiSpiraTest();
 
@@ -36,4 +38,9 @@ export async function getCasesTestSet(projectId: number, testSetId:number) {
         throw new Error('Error loading test tree');
     }
     return response.json();
+}
+
+export function reportTestExecutions(projectId: number, executions: PwExecution[]) {
+    const spiraExecutions = executions.map(({ playwrightTestId: _playwrightTestId, ...execution }) => execution);
+    return api.post(`${urlApi}/test-runs/${projectId}`, { executions: spiraExecutions });
 }

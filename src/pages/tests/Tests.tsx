@@ -4,10 +4,11 @@ import { useExecutionStore } from "../../store/executionStore";
 import { useNavStore } from "../../store/navStore";
 import { UiProcessBar } from "../../components/ui";
 import NavTests from "./components/NavTests";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { stripAnsi } from "../../utils/Utils";
 import type { TestResult } from "../../types/test.type";
 import type { PwExecution } from "../../types/playwright";
+import { reportTestExecutions } from "../../services/spiratest.service";
 
 interface TestsPageProps {
   isExecution?: boolean;
@@ -23,10 +24,16 @@ export default function TestsPage(props: TestsPageProps) {
   const isLoadingStore = useExecutionStore((state) => state.isLoadingStore);
   const resultTestStore = useExecutionStore((state) => state.resultTestStore);
   const setExecuteSpira = useExecutionStore((state) => state.setExecuteSpira);
+  const executeSpira = useExecutionStore((state) => state.executeSpira);
+  const spiraTestCases = useExecutionStore((state) => state.spiraTestCases);
   const totalTestsStore = useExecutionStore((state) => state.totalTestsStore);
   const summaryStore = useExecutionStore((state) => state.summaryStore);
   const durationStore = useExecutionStore((state) => state.durationStore);
   const progressStore = useExecutionStore((state) => state.progressStore);
+  const [reportState, setReportState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [reportError, setReportError] = useState("");
   const hasTests =
     testsStore.length > 0 || Object.keys(resultTestStore).length > 0;
 
@@ -42,21 +49,59 @@ export default function TestsPage(props: TestsPageProps) {
     return newSteps;
   };
 
+  const normalizeTestPath = (filePath: string) => {
+    const normalizedPath = filePath.replace(/\\/g, "/");
+    const testsRootIndex = normalizedPath.lastIndexOf("/src/tests/");
+    return testsRootIndex >= 0
+      ? normalizedPath.slice(testsRootIndex + "/src/tests/".length)
+      : normalizedPath.replace(/^\.?\/?(?:src\/tests\/)?/, "");
+  };
+
   useEffect(() => {
     const executions: PwExecution[] = isExecution
       ? Object.values(resultTestStore).flatMap((tests) =>
-          tests.map((item) => ({
-            spiraTestCaseId: item.id,
-            title: item.title,
-            status: item.error ? "failed" : "passed",
-            duration: item.duration,
-            steps: formatStepToSpira(item.steps),
-          })),
+          tests.flatMap((item) => {
+            const normalizedFile = normalizeTestPath(item.file);
+            const matchingCase = spiraTestCases.find(
+              (testCase) => normalizeTestPath(testCase.path) === normalizedFile,
+            );
+            if (!matchingCase) return [];
+
+            return [
+              {
+                spiraTestCaseId: String(matchingCase.id),
+                playwrightTestId: item.id,
+                title: item.title,
+                status: item.error ? "failed" : "passed",
+                duration: item.duration,
+                steps: formatStepToSpira(item.steps),
+              },
+            ];
+          }),
         )
       : [];
 
     setExecuteSpira(executions);
-  }, [isExecution, resultTestStore, setExecuteSpira]);
+  }, [isExecution, resultTestStore, setExecuteSpira, spiraTestCases]);
+
+  const reportExecutions = async () => {
+    setReportState("loading");
+    setReportError("");
+    try {
+      await reportTestExecutions(
+        Number(import.meta.env.VITE_API_PROYECT),
+        executeSpira,
+      );
+      setReportState("success");
+    } catch (error) {
+      setReportError(
+        error instanceof Error
+          ? error.message
+          : "No se pudieron reportar las pruebas.",
+      );
+      setReportState("error");
+    }
+  };
 
   return (
     <div
@@ -68,6 +113,9 @@ export default function TestsPage(props: TestsPageProps) {
         totalTests={totalTestsStore}
         numTest={testsStore.length}
         isExecution={isExecution}
+        onReportTests={reportExecutions}
+        reportState={reportState}
+        reportError={reportError}
       />
 
       <section className="shadow-panel overflow-x-hidden h-[91vh] dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900">

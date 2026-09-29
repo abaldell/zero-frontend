@@ -30,6 +30,7 @@ export interface TestPW{
 
 export interface PwExecution {
   spiraTestCaseId: string;
+  playwrightTestId: string;
   title: string;
   status: string;
   duration: number;

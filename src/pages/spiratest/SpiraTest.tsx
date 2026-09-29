@@ -31,6 +31,9 @@ export default function SpiraTestPage() {
   const setTestExecutions = useExecutionStore(
     (state) => state.setTestExecutions,
   );
+  const setSelectedSpiraTestCases = useExecutionStore(
+    (state) => state.setSpiraTestCases,
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -47,6 +50,7 @@ export default function SpiraTestPage() {
   const runTests = async () => {
     reset();
     setTestExecutions([]);
+    setSelectedSpiraTestCases(spiraTestCases);
     navigate("/tests/execution");
 
     try {

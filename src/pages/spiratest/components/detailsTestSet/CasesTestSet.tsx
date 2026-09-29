@@ -4,7 +4,7 @@ import { UiCard } from "../../../../components/ui";
 import { CircleIcon } from "lucide-react";
 import type { TestPW } from "../../../../types/playwright";
 import { Checkbox } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface CasesTestSetProps {
   casesTest: CaseTestSet[];
@@ -16,25 +16,18 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
   const { casesTest, testPW, onSelectTestCase, onSelectPaths } = props;
   const [selectedCases, setSelectedCases] = useState<TestPW[]>([]);
 
-  useEffect(() => {
-    if (selectedCases) {
-      onSelectTestCase(selectedCases);
-    }
-  }, [selectedCases]);
-
   const changeSelectedCases = (testCaseId: number) => {
-    const urlPath = testPW.find((item) => item.id === testCaseId)?.path ?? "";
-    setSelectedCases((prevSelectedCases) => {
-      const isSelected = prevSelectedCases.some(
-        (item) => item.id === testCaseId,
-      );
-      if (isSelected) {
-        return prevSelectedCases.filter((item) => item.id !== testCaseId);
-      } else {
-        return [...prevSelectedCases, { id: testCaseId, path: urlPath }];
-      }
-    });
-    onSelectPaths(selectedCases.map((testCase) => testCase.path));
+    const selectedCase = testPW.find((item) => item.id === testCaseId);
+    if (!selectedCase) return;
+
+    const isSelected = selectedCases.some((item) => item.id === testCaseId);
+    const nextSelectedCases = isSelected
+      ? selectedCases.filter((item) => item.id !== testCaseId)
+      : [...selectedCases, selectedCase];
+
+    setSelectedCases(nextSelectedCases);
+    onSelectTestCase(nextSelectedCases);
+    onSelectPaths(nextSelectedCases.map((testCase) => testCase.path));
   };
 
   return (

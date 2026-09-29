@@ -75,7 +75,7 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
       loadData();
     }
   }, [testSelected]);
-  console.log("statsDetails", statsDetails);
+
   return (
     <div className={`${loading ? "flex items-center justify-center" : ""}`}>
       {loading ? (

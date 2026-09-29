@@ -1,7 +1,7 @@
 
 import { create } from 'zustand';
 import type { TestResult } from '../types/test.type';
-import type { TestRunSummary as Summary, PwExecution } from "../types/playwright";
+import type { TestRunSummary as Summary, PwExecution, TestPW } from "../types/playwright";
 
 interface ExecutionStore {
   isFinishedStore: boolean,
@@ -13,6 +13,7 @@ interface ExecutionStore {
   testsStore: TestResult[],
   resultTestStore: Record<string, TestResult[]>
   executeSpira: PwExecution[];
+  spiraTestCases: TestPW[];
 
   setTestExecutions: (testsExecutions: TestResult[]) => void;
   setLoadingExecutions:(loading:boolean) => void;
@@ -23,7 +24,9 @@ interface ExecutionStore {
   setSummaryExecutions:(summary:Summary) => void;
   setResultTestExecutions:(tests:Record<string, TestResult[]>) => void
   setExecuteSpira: (executeSpira: PwExecution[]) => void;
+  setSpiraTestCases: (testCases: TestPW[]) => void;
   updateExecuteSpiraStep: (testCaseId: string, stepIndex: number, error: string) => void;
+  updateExecuteSpiraStatusStep: (testCaseId: string, stepIndex: number, status: string) => void;
   reset: ()=> void;
 }
 
@@ -38,6 +41,7 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
   testsStore: [],
   resultTestStore: {},
   executeSpira: [],
+  spiraTestCases: [],
 
   setTestExecutions:(execution) => 
     set({testsStore:execution}),
@@ -66,6 +70,9 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
   setExecuteSpira:(executeSpira) =>
     set({ executeSpira }),
 
+  setSpiraTestCases:(spiraTestCases) =>
+    set({ spiraTestCases }),
+
   updateExecuteSpiraStep:(testCaseId, stepIndex, result) =>
     set((state) => ({
       executeSpira: state.executeSpira.map((execution) =>
@@ -78,7 +85,23 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
               ),
             },
       ),
-    })),
+    })
+  ),
+
+  updateExecuteSpiraStatusStep:(testCaseId, stepIndex, status) =>
+    set((state) => ({
+      executeSpira: state.executeSpira.map((execution) =>
+        execution.spiraTestCaseId !== testCaseId
+          ? execution
+          : {
+              ...execution,
+              steps: execution.steps.map((step, index) =>
+                index === stepIndex ? { ...step, status: status} : step,
+              ),
+            },
+      ),
+    })
+  ),
 
   reset: () =>
     set({
@@ -91,5 +114,6 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
       testsStore: [],
       resultTestStore: {},
       executeSpira: [],
+      spiraTestCases: [],
     }),
 }));

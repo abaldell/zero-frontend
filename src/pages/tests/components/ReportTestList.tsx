@@ -3,7 +3,6 @@ import { CardTestList } from "../../../components/cards/CardTestList";
 import TestDetail from "./TestDetails";
 import type { TestResult } from "../../../types/test.type";
 import { FolderOpen } from "lucide-react";
-import { useExecutionStore } from "../../../store/executionStore";
 
 export interface ReportTestListProps {
   items: TestResult[];
@@ -11,11 +10,9 @@ export interface ReportTestListProps {
 }
 export const ReportTestList = (props: ReportTestListProps) => {
   const { items, itemsResult } = props;
-  const executeSpira = useExecutionStore((state) => state.executeSpira);
   const [testDetail, setTestDetail] = useState<TestResult>({} as TestResult);
   const hasResults = items.length > 0 || Object.keys(itemsResult).length > 0;
 
-  console.log("executeSpira", executeSpira);
   return (
     <div
       className={`${testDetail.id ? "flex gap-3" : ""} mt-3 transition-transform duration-300 items-stretch h-screen`}
@@ -56,12 +53,7 @@ export const ReportTestList = (props: ReportTestListProps) => {
         <div
           className={`${testDetail.id ? "w-3/4" : "w-full"} overflow-y-auto transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 rounded-md`}
         >
-          <TestDetail
-            test={testDetail}
-            executeDetail={
-              executeSpira.filter((val) => val.title === testDetail.title)[0]
-            }
-          />
+          <TestDetail test={testDetail} />
         </div>
       )}
     </div>

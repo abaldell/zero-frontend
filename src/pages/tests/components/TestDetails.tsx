@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { CircleIcon, Clock, FolderOpen } from "lucide-react";
 import { today } from "../../../utils/Utils";
 import Popup from "../../../components/ui/UiPopup";
@@ -6,30 +6,39 @@ import type { TestResult } from "../../../types/test.type";
 import { UiAccordion } from "../../../components/ui";
 import TraceCard from "../../../components/cards/TraceCard";
 import { useExecutionStore } from "../../../store/executionStore";
-import type { PwExecution } from "../../../types/playwright";
-import { Select } from "flowbite-react";
+// import type { PwExecution } from "../../../types/playwright";
 
 interface TestDetailProps {
   test: TestResult;
-  executeDetail?: PwExecution;
 }
 const TestDetail = (props: TestDetailProps) => {
-  const { test, executeDetail } = props;
+  const { test } = props;
   const updateExecuteSpiraStep = useExecutionStore(
     (state) => state.updateExecuteSpiraStep,
   );
-
+  const updateExecuteSpiraStatusStep = useExecutionStore(
+    (state) => state.updateExecuteSpiraStatusStep,
+  );
+  const executeSpira = useExecutionStore((state) => state.executeSpira);
+  const testSpira = executeSpira.find(
+    (spira) => spira.playwrightTestId === test.id,
+  );
   const traceTest = test.attachments.find((a) => a.name === "trace");
   const screenShot = test.attachments.find((a) => a.name === "screenshot");
   const video = test.attachments.find((a) => a.name === "video");
   const [openImage, setOpenImage] = useState(false);
   const [openVideo, setOpenVideo] = useState(false);
 
-  console.log("executeDetail", executeDetail);
-
   const changeExecuteSpira = (value: string, stepIndex: number) => {
-    if (!executeDetail) return;
-    updateExecuteSpiraStep(executeDetail.spiraTestCaseId, stepIndex, value);
+    updateExecuteSpiraStep(testSpira?.spiraTestCaseId || "", stepIndex, value);
+  };
+
+  const changeStatusStep = (newValue: string, stepIndex: number) => {
+    updateExecuteSpiraStatusStep(
+      testSpira?.spiraTestCaseId || "",
+      stepIndex,
+      newValue,
+    );
   };
 
   return (
@@ -92,33 +101,46 @@ const TestDetail = (props: TestDetailProps) => {
 
         <div className="my-3">
           {test.steps &&
-            test.steps.map((step, i) => (
-              <>
-                <UiAccordion key={step.id} step={step} level={0} />
-                {executeDetail && (
-                  <div>
-                    <div className="flex justify-between">
-                      <h3>Reporte step</h3>
-                      <Select>
-                        <option>Passed</option>
-                        <option>Failed</option>
-                        <option>Blocked</option>
-                        <option>Caution</option>
-                      </Select>
+            test.steps.map((step, i) => {
+              const executeDetail = testSpira?.steps?.find(
+                (spira) => spira.name === step.title,
+              );
+              return (
+                <Fragment key={`${test.id}-${i}`}>
+                  <UiAccordion step={step} level={0} />
+                  {testSpira && (
+                    <div className="rounded-md shadow ring-1 ring-inset ring-slate-200 dark:ring-slate-700 bg-slate-200 dark:bg-slate-800 p-3">
+                      <div className="flex justify-between">
+                        <h3>Reporte step</h3>
+                        <select
+                          id={`step-${i}`}
+                          value={
+                            executeDetail?.status ??
+                            (step.error ? "failed" : "passed")
+                          }
+                          onChange={(e) => changeStatusStep(e.target.value, i)}
+                          className={`rounded-md p-2 capitalize ${executeDetail?.status === "passed" ? "bg-green-600/20" : executeDetail?.status === "failed" ? "bg-red-600/20" : executeDetail?.status === "blocked" ? "bg-orange-600/20" : "bg-yellow-600/20"}`}
+                        >
+                          <option className="bg-green-600/30">passed</option>
+                          <option className="bg-red-600/30">failed</option>
+                          <option className="bg-orange-500/30">blocked</option>
+                          <option className="bg-yellow-300/30">caution</option>
+                        </select>
+                      </div>
+                      <textarea
+                        className="w-full min-h-36 rounded-md mt-3 shadow ring-1 ring-inset ring-slate-200 focus-visible:ring-slate-700 dark:ring-slate-700 bg-slate-200 dark:bg-slate-800 p-3"
+                        id={`${test.id}-${i.toString()}`}
+                        placeholder="Breve descripción del resultado"
+                        value={executeDetail?.actualResult ?? ""}
+                        onChange={(text) =>
+                          changeExecuteSpira(text.target.value, i)
+                        }
+                      />
                     </div>
-                    <textarea
-                      className="w-full min-h-36 rounded-md shadow ring-1 ring-inset ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-900 p-3"
-                      id={`${test.id}-${i.toString()}`}
-                      defaultValue={executeDetail.steps[i]?.actualResult}
-                      onChange={(text) =>
-                        changeExecuteSpira(text.target.value, i)
-                      }
-                      key={test.id}
-                    />
-                  </div>
-                )}
-              </>
-            ))}
+                  )}
+                </Fragment>
+              );
+            })}
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
