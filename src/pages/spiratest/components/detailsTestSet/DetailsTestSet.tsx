@@ -117,6 +117,7 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
           </div>
           <StatsTestSet stats={statsDetails} />
           <CasesTestSet
+            key={testSelected}
             casesTest={casesTest}
             testPW={testPW}
             onSelectTestCase={onSelectTestCase}

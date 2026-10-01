@@ -20,6 +20,7 @@ export default function MainLayout() {
   const isFinishedStore = useExecutionStore((state) => state.isFinishedStore);
   const isLoadingStore = useExecutionStore((state) => state.isLoadingStore);
   const totalTestsStore = useExecutionStore((state) => state.totalTestsStore);
+  const spiraTestCases = useExecutionStore((state) => state.spiraTestCases);
 
   const setLoadingExecutions = useExecutionStore(
     (state) => state.setLoadingExecutions,
@@ -123,9 +124,18 @@ export default function MainLayout() {
 
   const readResults = async (tests: TestResult[]) => {
     const report = await loadPlaywrightResults();
-    const resultsMap = buildResultsMap(report, tests);
+    const selectedCaseIds = spiraTestCases.map((testCase) => testCase.id);
+    const resultsMap = buildResultsMap(report, tests, selectedCaseIds);
 
     setResultTestExecutions(resultsMap);
+    if (selectedCaseIds.length > 0) {
+      const results = Object.values(resultsMap).flat();
+      setTestExecutions(results);
+      setTotalExecutions(results.length);
+      setDurationExecutions(
+        results.reduce((total, result) => total + (result.duration ?? 0), 0),
+      );
+    }
   };
 
   const runTests = async () => {
@@ -159,7 +169,7 @@ export default function MainLayout() {
       );
       setOpenNav(false);
     }
-  }, [isFinishedStore, testsStore]);
+  }, [isFinishedStore, spiraTestCases]);
 
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", openDrawer);

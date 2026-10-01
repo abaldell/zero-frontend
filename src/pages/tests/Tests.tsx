@@ -38,32 +38,37 @@ export default function TestsPage(props: TestsPageProps) {
     testsStore.length > 0 || Object.keys(resultTestStore).length > 0;
 
   const formatStepToSpira = (steps: TestResult[]) => {
-    const newSteps = steps.map((step) => {
+    return steps.map((step) => {
+      const error =
+        typeof step.error === "string" ? step.error : step.error?.message || "";
+      const resultStatus = step.status?.toLowerCase();
+      const status =
+        resultStatus === "failed" ||
+        resultStatus === "blocked" ||
+        resultStatus === "caution"
+          ? resultStatus
+          : resultStatus === "skipped"
+            ? "blocked"
+            : error
+              ? "failed"
+              : "passed";
+
       return {
         name: step.title,
-        status: step.error ? "failed" : "passed",
-        actualResult: "",
-        error: stripAnsi(step.error?.message || ""),
+        status,
+        actualResult: stripAnsi(error),
+        error: stripAnsi(error),
       };
     });
-    return newSteps;
-  };
-
-  const normalizeTestPath = (filePath: string) => {
-    const normalizedPath = filePath.replace(/\\/g, "/");
-    const testsRootIndex = normalizedPath.lastIndexOf("/src/tests/");
-    return testsRootIndex >= 0
-      ? normalizedPath.slice(testsRootIndex + "/src/tests/".length)
-      : normalizedPath.replace(/^\.?\/?(?:src\/tests\/)?/, "");
   };
 
   useEffect(() => {
     const executions: PwExecution[] = isExecution
       ? Object.values(resultTestStore).flatMap((tests) =>
           tests.flatMap((item) => {
-            const normalizedFile = normalizeTestPath(item.file);
+            const testCaseId = item.title.match(/\[TC:(\d+)\]/i)?.[1];
             const matchingCase = spiraTestCases.find(
-              (testCase) => normalizeTestPath(testCase.path) === normalizedFile,
+              (testCase) => String(testCase.id) === testCaseId,
             );
             if (!matchingCase) return [];
 
@@ -72,7 +77,12 @@ export default function TestsPage(props: TestsPageProps) {
                 spiraTestCaseId: String(matchingCase.id),
                 playwrightTestId: item.id,
                 title: item.title,
-                status: item.error ? "failed" : "passed",
+                status:
+                  item.status === "passed"
+                    ? "passed"
+                    : item.status === "skipped"
+                      ? "blocked"
+                      : "failed",
                 duration: item.duration,
                 steps: formatStepToSpira(item.steps),
               },

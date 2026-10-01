@@ -36,6 +36,11 @@ export default function SpiraTestPage() {
   );
 
   useEffect(() => {
+    setSpiraTestCases([]);
+    setSelectedPaths([]);
+  }, [testSetId]);
+
+  useEffect(() => {
     const loadData = async () => {
       try {
         const data = await getAllTestTree(import.meta.env.VITE_API_PROYECT);

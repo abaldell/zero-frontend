@@ -5,7 +5,7 @@ import { getApiFiles, getApiResults } from "./Utils";
 
 
 export async function loadPlaywrightResults() {
-    const results = await fetch(getApiResults());
+    const results = await fetch(getApiResults(), { cache: "no-store" });
     if (!results.ok) {
         throw new Error(`No se pudo cargar el reporte: ${results.status}`);
     }
@@ -93,9 +93,14 @@ function buildStepTree(step: ReporterStep | TestStepNode, allSteps: TestResult[]
 }
 
 
-export function buildResultsMap(report: any, test: TestResult[]) {
+export function buildResultsMap(
+    report: any,
+    test: TestResult[],
+    selectedTestCaseIds: number[] = [],
+) {
     const specs = getAllSpecs(report);
     const result:TestResult[] = []
+    const selectedIds = new Set(selectedTestCaseIds.map(String));
     
     for (const spec of specs) {
         const run = spec.tests?.[0];
@@ -107,6 +112,13 @@ export function buildResultsMap(report: any, test: TestResult[]) {
         const lastResult = run.results?.[run.results.length - 1];
 
         const subTest = test.find(val => val.title === spec.title)
+        const testCaseId = spec.title.match(/\[TC:(\d+)\]/i)?.[1];
+        if (selectedIds.size > 0 && (!testCaseId || !selectedIds.has(testCaseId))) {
+            continue;
+        }
+        if (!subTest && selectedIds.size === 0) {
+            continue;
+        }
         const executionSteps = subTest?.steps ?? [];
 
         result.push({
