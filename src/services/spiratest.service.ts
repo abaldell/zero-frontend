@@ -40,7 +40,14 @@ export async function getCasesTestSet(projectId: number, testSetId:number) {
     return response.json();
 }
 
-export function reportTestExecutions(projectId: number, executions: PwExecution[]) {
+export function reportTestExecutions(
+    projectId: number,
+    testSetId: number | null,
+    executions: PwExecution[],
+) {
     const spiraExecutions = executions.map(({ playwrightTestId: _playwrightTestId, ...execution }) => execution);
-    return api.post(`${urlApi}/test-runs/${projectId}`, { executions: spiraExecutions });
+    return api.post(`${urlApi}/test-runs/${projectId}`, {
+        testSetId,
+        executions: spiraExecutions,
+    });
 }

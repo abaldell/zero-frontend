@@ -14,6 +14,7 @@ interface ExecutionStore {
   resultTestStore: Record<string, TestResult[]>
   executeSpira: PwExecution[];
   spiraTestCases: TestPW[];
+  selectedTestSetId: number | null;
 
   setTestExecutions: (testsExecutions: TestResult[]) => void;
   setLoadingExecutions:(loading:boolean) => void;
@@ -25,6 +26,7 @@ interface ExecutionStore {
   setResultTestExecutions:(tests:Record<string, TestResult[]>) => void
   setExecuteSpira: (executeSpira: PwExecution[]) => void;
   setSpiraTestCases: (testCases: TestPW[]) => void;
+  setSelectedTestSetId: (testSetId: number | null) => void;
   updateExecuteSpiraStep: (testCaseId: string, stepIndex: number, error: string) => void;
   updateExecuteSpiraStatusStep: (testCaseId: string, stepIndex: number, status: string) => void;
   reset: ()=> void;
@@ -42,6 +44,7 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
   resultTestStore: {},
   executeSpira: [],
   spiraTestCases: [],
+  selectedTestSetId: null,
 
   setTestExecutions:(execution) => 
     set({testsStore:execution}),
@@ -72,6 +75,9 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
 
   setSpiraTestCases:(spiraTestCases) =>
     set({ spiraTestCases }),
+
+  setSelectedTestSetId:(selectedTestSetId) =>
+    set({ selectedTestSetId }),
 
   updateExecuteSpiraStep:(testCaseId, stepIndex, result) =>
     set((state) => ({
@@ -115,5 +121,6 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
       resultTestStore: {},
       executeSpira: [],
       spiraTestCases: [],
+      selectedTestSetId: null,
     }),
 }));

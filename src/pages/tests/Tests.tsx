@@ -26,6 +26,9 @@ export default function TestsPage(props: TestsPageProps) {
   const setExecuteSpira = useExecutionStore((state) => state.setExecuteSpira);
   const executeSpira = useExecutionStore((state) => state.executeSpira);
   const spiraTestCases = useExecutionStore((state) => state.spiraTestCases);
+  const selectedTestSetId = useExecutionStore(
+    (state) => state.selectedTestSetId,
+  );
   const totalTestsStore = useExecutionStore((state) => state.totalTestsStore);
   const summaryStore = useExecutionStore((state) => state.summaryStore);
   const durationStore = useExecutionStore((state) => state.durationStore);
@@ -100,6 +103,7 @@ export default function TestsPage(props: TestsPageProps) {
     try {
       await reportTestExecutions(
         Number(import.meta.env.VITE_API_PROYECT),
+        selectedTestSetId,
         executeSpira,
       );
       setReportState("success");
