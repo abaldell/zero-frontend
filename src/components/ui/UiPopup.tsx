@@ -13,7 +13,7 @@ export default function UiPopup(props: UiPopupProps) {
       <Dialog
         open={open}
         onClose={() => onClose(false)}
-        className="relative z-10"
+        className="relative z-50"
       >
         <DialogBackdrop
           transition

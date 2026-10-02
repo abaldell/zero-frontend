@@ -15,7 +15,7 @@ export const ReportTestList = (props: ReportTestListProps) => {
 
   return (
     <div
-      className={`${testDetail.id ? "flex gap-3" : ""} mt-3 transition-transform duration-300 items-stretch h-screen`}
+      className={`${testDetail.id ? "flex gap-3" : ""} mt-3 transition-transform duration-300 items-stretch`}
     >
       {hasResults && (
         <div

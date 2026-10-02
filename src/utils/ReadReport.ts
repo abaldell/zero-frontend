@@ -3,6 +3,12 @@ import type { ReporterStep, TestStepNode } from "../types/reporterTest.type";
 import type { TestResult } from "../types/test.type";
 import { getApiFiles, getApiResults } from "./Utils";
 
+interface PlaywrightAttachment {
+    name: string;
+    contentType: string;
+    path: string;
+}
+
 
 export async function loadPlaywrightResults() {
     const results = await fetch(getApiResults(), { cache: "no-store" });
@@ -42,7 +48,7 @@ export function getAllSpecs(report: any) {
 }
 
 export function getAttachmentUrl(filePath: string) { 
-    const idx = filePath.indexOf('playwright');
+    const idx = filePath.indexOf('zero-playwright');
 
     if (idx === -1) {
         return '';
@@ -120,6 +126,27 @@ export function buildResultsMap(
             continue;
         }
         const executionSteps = subTest?.steps ?? [];
+        const reportAttachments = (lastResult?.attachments ?? []) as PlaywrightAttachment[];
+        const attachments = reportAttachments.map((attachment) => ({
+            name: attachment.name,
+            contentType: attachment.contentType,
+            path: getAttachmentUrl(attachment.path),
+        }));
+        const traceSource = reportAttachments.find(
+            (attachment) => attachment.name === "video" || attachment.name === "screenshot",
+        );
+        if (
+            lastResult?.status === "failed" &&
+            traceSource?.path &&
+            !attachments.some((attachment) => attachment.name === "trace")
+        ) {
+            const tracePath = traceSource.path.replace(/[^\\/]+$/, "trace.zip");
+            attachments.push({
+                name: "trace",
+                contentType: "application/zip",
+                path: getAttachmentUrl(tracePath),
+            });
+        }
 
         result.push({
         id: spec.id,
@@ -135,12 +162,7 @@ export function buildResultsMap(
             ) ?? [],
 
 
-        attachments:
-            lastResult?.attachments?.map((attachment: any) => ({
-            name: attachment.name,
-            contentType: attachment.contentType,
-            path: getAttachmentUrl(attachment.path),
-            })) ?? [],
+        attachments,
         });
     }
 

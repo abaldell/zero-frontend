@@ -1,4 +1,5 @@
 import { FileSearch } from "lucide-react";
+import { getApiFiles } from "../../utils/Utils";
 
 interface TraceCardProps {
   traceUrl: string;
@@ -7,7 +8,14 @@ export const TraceCard = (props: TraceCardProps) => {
   const { traceUrl } = props;
   if (!traceUrl) return null;
 
-  const traceViewerUrl = `https://trace.playwright.dev/?trace=${encodeURIComponent(traceUrl)}`;
+  const tracePath = new URL(traceUrl).pathname;
+  const resultsPathIndex = tracePath.lastIndexOf("/test-results/");
+  if (resultsPathIndex === -1) return null;
+
+  const relativeTracePath = decodeURIComponent(
+    tracePath.slice(resultsPathIndex + "/test-results/".length),
+  );
+  const traceViewerUrl = `${getApiFiles()}/trace-viewer?path=${encodeURIComponent(relativeTracePath)}`;
   return (
     <a
       href={traceViewerUrl}

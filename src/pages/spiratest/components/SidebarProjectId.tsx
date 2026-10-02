@@ -24,7 +24,7 @@ export const SidebarProjectId = (props: SidebarProjectIdProps) => {
                   className={`flex flex-row ${testSelected ? "items-stretch" : "items-center"}  gap-x-3`}
                 >
                   <div
-                    className={`w-2 ring-1 ring-inset rounded-md
+                    className={`min-w-1.25 ring-1 ring-inset rounded-md
                           ${
                             item.TestSetStatusId === 2
                               ? "bg-sky-600 text-sky-600 ring-sky-600/20"

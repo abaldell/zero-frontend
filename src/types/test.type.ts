@@ -7,6 +7,8 @@ export type TestStatus =
   | "skipped"
   | "interrupted";
 
+export type TestStatusReport = "idle" | "loading" | "success" | "error";
+
 export interface TestResult {
   id: string;
   title: string;

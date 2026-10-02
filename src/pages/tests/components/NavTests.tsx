@@ -11,7 +11,6 @@ interface NavTestsProps {
   isExecution: boolean;
   onReportTests: () => void;
   reportState: ReportState;
-  reportError: string;
 }
 const NavTests = (props: NavTestsProps) => {
   const {
@@ -22,7 +21,6 @@ const NavTests = (props: NavTestsProps) => {
     isExecution,
     onReportTests,
     reportState,
-    reportError,
   } = props;
   return (
     <UiNavHorizontal>
@@ -59,11 +57,6 @@ const NavTests = (props: NavTestsProps) => {
                       ? "Reportado"
                       : "Reportar pruebas"}
                 </button>
-                {reportState === "error" && (
-                  <span role="alert" className="max-w-sm text-xs text-red-600">
-                    {reportError}
-                  </span>
-                )}
               </div>
             )}
           </div>

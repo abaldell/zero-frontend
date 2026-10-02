@@ -41,6 +41,8 @@ const TestDetail = (props: TestDetailProps) => {
     );
   };
 
+  console.log("traceTest", traceTest);
+
   return (
     <div className=" text-black/70 dark:text-white">
       <div className="mx-auto  space-y-6 p-6">

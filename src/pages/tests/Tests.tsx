@@ -2,11 +2,11 @@ import TestRunSummary from "./components/TestRunSummary";
 import { ReportTestList } from "./components/ReportTestList";
 import { useExecutionStore } from "../../store/executionStore";
 import { useNavStore } from "../../store/navStore";
-import { UiProcessBar } from "../../components/ui";
+import { UiAlert, UiProcessBar } from "../../components/ui";
 import NavTests from "./components/NavTests";
 import { useEffect, useState } from "react";
 import { stripAnsi } from "../../utils/Utils";
-import type { TestResult } from "../../types/test.type";
+import type { TestResult, TestStatusReport } from "../../types/test.type";
 import type { PwExecution } from "../../types/playwright";
 import { reportTestExecutions } from "../../services/spiratest.service";
 
@@ -33,10 +33,9 @@ export default function TestsPage(props: TestsPageProps) {
   const summaryStore = useExecutionStore((state) => state.summaryStore);
   const durationStore = useExecutionStore((state) => state.durationStore);
   const progressStore = useExecutionStore((state) => state.progressStore);
-  const [reportState, setReportState] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [reportState, setReportState] = useState<TestStatusReport>("idle");
   const [reportError, setReportError] = useState("");
+  const [closeAlert, setCloseAlert] = useState<boolean>(true);
   const hasTests =
     testsStore.length > 0 || Object.keys(resultTestStore).length > 0;
 
@@ -113,6 +112,7 @@ export default function TestsPage(props: TestsPageProps) {
           ? error.message
           : "No se pudieron reportar las pruebas.",
       );
+      setCloseAlert(true);
       setReportState("error");
     }
   };
@@ -129,7 +129,6 @@ export default function TestsPage(props: TestsPageProps) {
         isExecution={isExecution}
         onReportTests={reportExecutions}
         reportState={reportState}
-        reportError={reportError}
       />
 
       <section className="shadow-panel overflow-x-hidden h-[91vh] dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900">
@@ -154,6 +153,13 @@ export default function TestsPage(props: TestsPageProps) {
             <ReportTestList items={testsStore} itemsResult={resultTestStore} />
           )}
         </div>
+        {reportState && closeAlert && (
+          <UiAlert
+            title={reportError}
+            status={reportState}
+            onClose={setCloseAlert}
+          />
+        )}
       </section>
     </div>
   );

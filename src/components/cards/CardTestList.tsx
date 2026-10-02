@@ -45,7 +45,7 @@ export const CardTestList = (props: CardListProps) => {
                     />
                   ) : (
                     <div
-                      className={`w-2 ring-1 ring-inset rounded-md
+                      className={`min-w-1.25 ring-1 ring-inset rounded-md
                           ${
                             item.status === "running" ||
                             item.status === "skipped"
