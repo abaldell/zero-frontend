@@ -63,7 +63,7 @@
       text-decoration: none;
     }
     nav a:hover { color: white; background: rgba(255,255,255,.1); }
-    main { width: min(1120px, 100%); padding: 48px clamp(22px, 5vw, 72px) 80px; }
+    main { width: min(1600px, 100%); padding: 48px clamp(22px, 5vw, 72px) 80px; }
     .hero {
       position: relative;
       overflow: hidden;
@@ -89,12 +89,41 @@
     .card { padding: 21px; }
     .card h3 { margin-top: 0; }
     .card p { margin-bottom: 0; color: var(--muted); }
+    .tech-stack { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 24px 0 34px; }
+    .tech-layer { position: relative; min-width: 0; padding: 22px; border: 1px solid var(--line); border-top: 4px solid var(--layer-color); border-radius: 8px; background: var(--surface); }
+    .tech-layer:nth-child(1) { --layer-color: #0f9f91; }
+    .tech-layer:nth-child(2) { --layer-color: #dc6b4f; }
+    .tech-layer:nth-child(3) { --layer-color: #d49b26; }
+    .layer-label { display: block; margin-bottom: 9px; color: var(--layer-color); font-size: .76rem; font-weight: 750; text-transform: uppercase; }
+    .tech-layer h3 { margin: 0 0 10px; font-size: 1.25rem; }
+    .tech-layer p { min-height: 4.8em; margin: 0; color: var(--muted); font-size: .94rem; }
+    .tool-tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0 0; padding: 0; list-style: none; }
+    .tool-tags li { padding: 4px 9px; border: 1px solid var(--line); border-radius: 5px; color: var(--text); background: var(--surface-muted); font-size: .8rem; line-height: 1.35; }
+    .architecture-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; margin: 20px 0 34px; counter-reset: flow; }
+    .flow-step { position: relative; min-height: 142px; padding: 17px; border-left: 3px solid var(--flow-color, var(--primary)); background: var(--surface); }
+    .flow-step:nth-child(1) { --flow-color: #0f9f91; }
+    .flow-step:nth-child(2) { --flow-color: #315bea; }
+    .flow-step:nth-child(3) { --flow-color: #dc6b4f; }
+    .flow-step:nth-child(4) { --flow-color: #d49b26; }
+    .flow-step::before { counter-increment: flow; content: "0" counter(flow); display: block; margin-bottom: 13px; color: var(--flow-color); font-size: .78rem; font-weight: 800; }
+    .flow-step:not(:last-child)::after { content: "→"; position: absolute; top: 48%; right: -23px; color: var(--muted); font-size: 1.2rem; }
+    .flow-step strong { display: block; margin-bottom: 5px; }
+    .flow-step p { margin: 0; color: var(--muted); font-size: .9rem; }
+    .pattern-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 22px; margin: 10px 0 24px; }
+    .pattern-item { padding: 16px 0; border-top: 1px solid var(--line); }
+    .pattern-item strong { display: block; margin-bottom: 5px; }
+    .pattern-item p { margin: 0; color: var(--muted); font-size: .92rem; }
     .steps { counter-reset: step; display: grid; gap: 12px; margin: 18px 0; padding: 0; list-style: none; }
     .steps li { position: relative; min-height: 50px; padding: 12px 16px 12px 58px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
     .steps li::before { counter-increment: step; content: counter(step); position: absolute; top: 11px; left: 16px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: white; font-weight: 700; background: var(--primary); }
     .notice { padding: 17px 20px; margin: 18px 0; border-left: 4px solid var(--primary); }
     .notice.warning { border-left-color: var(--warning); }
     .notice strong { display: block; margin-bottom: 3px; }
+    figure.screenshot { margin: 24px 0; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+    figure.screenshot img { display: block; width: 100%; max-height: 720px; object-fit: contain; object-position: left top; background: #f1f5f9; }
+    figure.screenshot figcaption { padding: 11px 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+    .screenshot-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 24px 0; }
+    .screenshot-pair figure.screenshot { min-width: 0; margin: 0; }
     ul { padding-left: 23px; }
     table { width: 100%; overflow: hidden; border-spacing: 0; border-collapse: separate; }
     th, td { padding: 12px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
@@ -111,8 +140,13 @@
       nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
       .brand { margin-bottom: 20px; }
       main { padding-top: 24px; }
+      .screenshot-pair { grid-template-columns: 1fr; }
+      .tech-stack { grid-template-columns: 1fr; }
+      .architecture-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .flow-step:not(:last-child)::after { content: none; }
+      .pattern-grid { grid-template-columns: 1fr; }
     }
-    @media (max-width: 480px) { nav { grid-template-columns: 1fr; } th, td { padding: 10px; } }
+    @media (max-width: 480px) { nav { grid-template-columns: 1fr; } th, td { padding: 10px; } .architecture-flow { grid-template-columns: 1fr; } .tech-layer p { min-height: 0; } }
   </style>
 </head>
 <body>
@@ -125,14 +159,19 @@
       <p class="toc-title">Contenido</p>
       <nav aria-label="Tabla de contenidos">
         <a href="#inicio">Introducción</a>
+        <a href="#alcance">Qué incluye ZeroApp</a>
+        <a href="#tecnologias">Herramientas y arquitectura</a>
+        <a href="#preparacion">Preparación y acceso</a>
         <a href="#interfaz">Conocer la interfaz</a>
         <a href="#ejecucion">Ejecutar pruebas</a>
         <a href="#resultados">Consultar resultados</a>
         <a href="#detalle">Analizar una prueba</a>
         <a href="#spiratest">Trabajar con SpiraTest</a>
+        <a href="#publicar">Enviar resultados a SpiraTest</a>
         <a href="#estados">Estados y leyenda</a>
         <a href="#requisitos">Requisitos y limitaciones</a>
         <a href="#ayuda">Resolución de problemas</a>
+        <a href="#mejoras">Mejoras futuras</a>
       </nav>
     </aside>
 
@@ -143,6 +182,71 @@
         <p>ZeroApp centraliza la selección de pruebas Playwright, la ejecución en tiempo real y la consulta de evidencias. También permite trabajar con conjuntos y casos de prueba procedentes de SpiraTest.</p>
         <div class="hero-meta"><span class="pill">Playwright</span><span class="pill">SpiraTest</span><span class="pill">Resultados en tiempo real</span></div>
       </header>
+
+      <section id="alcance">
+        <h2>Qué incluye ZeroApp</h2>
+        <p class="lead">ZeroApp reúne en una sola interfaz la selección de pruebas automatizadas, su seguimiento y la revisión de resultados.</p>
+        <div class="grid">
+          <article class="card"><h3>Interfaz de usuario</h3><p>Desde el navegador puedes elegir suites, revisar ejecuciones, abrir evidencias y consultar conjuntos de SpiraTest.</p></article>
+          <article class="card"><h3>Servicio de ejecución</h3><p>El backend coordina el inicio de las ejecuciones, envía actualizaciones a la interfaz y sirve archivos de resultados y evidencias.</p></article>
+          <article class="card"><h3>Pruebas Playwright</h3><p>El proyecto de automatización contiene las pruebas y genera resultados, pasos y evidencias que la aplicación presenta.</p></article>
+          <article class="card"><h3>Integración SpiraTest</h3><p>Permite consultar conjuntos y casos, asociar casos automatizados y enviar los resultados de una ejecución terminada.</p></article>
+        </div>
+        <p>Como usuario, el recorrido habitual empieza en la interfaz web. No es necesario ejecutar comandos de Playwright para usar las funciones disponibles desde la aplicación.</p>
+      </section>
+
+      <section id="tecnologias">
+        <h2>Herramientas y arquitectura</h2>
+        <p class="lead">ZeroApp combina una interfaz web, un servicio backend y un proyecto independiente de automatización Playwright. Cada parte tiene responsabilidades diferenciadas.</p>
+        <div class="tech-stack">
+          <article class="tech-layer">
+            <span class="layer-label">01 · Experiencia</span>
+            <h3>Frontend</h3>
+            <p>Interfaz web por componentes, navegación entre vistas y estado compartido para seguir ejecuciones.</p>
+            <ul class="tool-tags"><li>React 19</li><li>TypeScript</li><li>Vite</li><li>React Router</li><li>Zustand</li><li>Tailwind CSS</li><li>Flowbite</li><li>Axios</li><li>ApexCharts</li><li>Lucide</li></ul>
+          </article>
+          <article class="tech-layer">
+            <span class="layer-label">02 · Orquestación</span>
+            <h3>Backend</h3>
+            <p>API modular que inicia ejecuciones, comunica eventos y conecta con SpiraTest.</p>
+            <ul class="tool-tags"><li>Node.js</li><li>TypeScript</li><li>Fastify</li><li>REST</li><li>SSE</li><li>dotenv</li><li>CORS</li></ul>
+          </article>
+          <article class="tech-layer">
+            <span class="layer-label">03 · Calidad</span>
+            <h3>Automatización</h3>
+            <p>Pruebas UI y API organizadas por proyectos, con resultados y evidencias para análisis.</p>
+            <ul class="tool-tags"><li>Playwright Test</li><li>TypeScript</li><li>Page Objects</li><li>Fixtures</li><li>Reporters HTML/JSON</li></ul>
+          </article>
+        </div>
+        <h3>Recorrido de una ejecución</h3>
+        <div class="architecture-flow">
+          <article class="flow-step"><strong>Selección en el navegador</strong><p>El frontend envía las suites, scripts y casos seleccionados.</p></article>
+          <article class="flow-step"><strong>Solicitud al backend</strong><p>Fastify enruta la petición al servicio de ejecución.</p></article>
+          <article class="flow-step"><strong>Ejecución y eventos</strong><p>Playwright corre las pruebas; SSE comunica inicio y finalización.</p></article>
+          <article class="flow-step"><strong>Resultados y reporte</strong><p>La interfaz presenta el reporte y permite publicarlo en SpiraTest.</p></article>
+        </div>
+        <h3>Arquitectura y patrones</h3>
+        <div class="pattern-grid">
+          <article class="pattern-item"><strong>Cliente-servidor</strong><p>Frontend y backend separados, conectados mediante HTTP y SSE.</p></article>
+          <article class="pattern-item"><strong>Backend modular por capas</strong><p>Rutas, controladores y servicios organizados por dominio; las ejecuciones usan repositorio/almacenamiento.</p></article>
+          <article class="pattern-item"><strong>Componentes y estado compartido</strong><p>React divide la interfaz en piezas y Zustand mantiene el estado de ejecución entre vistas.</p></article>
+          <article class="pattern-item"><strong>Page Object Model</strong><p>Las páginas Playwright heredan de <code>BasePage</code> y encapsulan interacciones de UI.</p></article>
+          <article class="pattern-item"><strong>Fixtures y fábricas</strong><p>Recursos reutilizables para preparar contexto de prueba y generar datos.</p></article>
+        </div>
+        <div class="notice warning"><strong>Nota sobre dependencias</strong>Los manifiestos del backend también declaran Prisma, BullMQ y Redis (ioredis), pero no forman parte del flujo de ejecución descrito aquí: la ruta de ejecución observada usa el almacenamiento/repository configurado en el propio backend. Su presencia en las dependencias no implica por sí sola que las colas o la persistencia estén activas.</div>
+      </section>
+
+      <section id="preparacion">
+        <h2>Preparación y acceso</h2>
+        <p>Antes de iniciar, confirma con la persona administradora que el entorno esté preparado:</p>
+        <ul>
+          <li>La aplicación web y su backend están iniciados y se pueden alcanzar desde tu navegador.</li>
+          <li>El backend puede acceder al proyecto de pruebas Playwright y a las credenciales de SpiraTest configuradas para el entorno.</li>
+          <li>El proyecto y el conjunto de pruebas de SpiraTest que vas a utilizar están disponibles.</li>
+          <li>Si necesitas abrir traces, el visor de Playwright está disponible y puede acceder a los archivos de evidencia.</li>
+        </ul>
+        <div class="notice warning"><strong>Acceso y configuración</strong>Las direcciones de los servicios, las credenciales y el identificador de proyecto se configuran por entorno. Si no puedes acceder o no aparecen datos, solicita estos valores a la persona administradora; no compartas claves ni las incluyas en la guía.</div>
+      </section>
 
       <section id="interfaz">
         <h2>Conocer la interfaz</h2>
@@ -166,6 +270,23 @@
           <li>Revisa la selección y pulsa <strong>Ejecutar selección</strong>. Para volver a cargar el contenido, usa <strong>Recargar suites</strong>.</li>
           <li>La aplicación cerrará el panel y abrirá la pantalla de pruebas. Mantén la página abierta para recibir el progreso.</li>
         </ol>
+        <figure class="screenshot">
+          <img src="images/seleccion-pruebas.png" alt="Panel de selección de pruebas con el árbol de suites Playwright y la lista de scripts disponibles" loading="lazy">
+          <figcaption>En el panel Ejecutar Tests, expande las carpetas, marca las suites y elige los scripts antes de iniciar.</figcaption>
+        </figure>
+                <figure class="screenshot">
+          <img src="images/proceso-test.png" alt="Panel de selección de pruebas con el árbol de suites Playwright y la lista de scripts disponibles" loading="lazy">
+          <figcaption>Ejecutando los test del archivo seleccionado.</figcaption>
+        </figure>
+                <figure class="screenshot">
+          <img src="images/fin-proceso-test.png" alt="Panel de selección de pruebas con el árbol de suites Playwright y la lista de scripts disponibles" loading="lazy">
+          <figcaption>Finalizado la ejecución de test.</figcaption>
+        </figure>
+         </figure>
+                <figure class="screenshot">
+          <img src="images/detalle-test.png" alt="Panel de selección de pruebas con el árbol de suites Playwright y la lista de scripts disponibles" loading="lazy">
+          <figcaption>Detalles de cada test ejecutado.</figcaption>
+        </figure>
         <div class="notice warning"><strong>Antes de ejecutar</strong>Comprueba que el backend esté disponible y que la selección contenga al menos una ruta o script válido. Las carpetas pueden incluir varios archivos, por lo que una selección amplia puede generar una ejecución más larga.</div>
       </section>
 
@@ -211,7 +332,34 @@
         </ol>
         <h3>Estadísticas del conjunto</h3>
         <p>El detalle incluye un gráfico con casos pasados, fallidos, bloqueados, en precaución, no ejecutados y no aplicables. La barra de la tabla representa visualmente pasados, fallidos, no ejecutados y bloqueados.</p>
-        <div class="notice warning"><strong>Importante</strong>La selección solo está disponible para casos con automatización Playwright asociada. Los resultados editados en la pantalla no se publican actualmente de forma automática en SpiraTest.</div>
+        <figure class="screenshot">
+          <img src="images/conjuntos-spiratest.png" alt="Tabla de conjuntos de SpiraTest con identificadores, nombres, versiones y estado de ejecución" loading="lazy">
+          <figcaption>En el listado de SpiraTest, selecciona una fila para abrir su detalle.</figcaption>
+        </figure>
+        <div class="">
+          <figure class="screenshot">
+            <img src="images/detalle-conjunto.png" alt="TestSet SP19 en modo oscuro, con casos pasados, fallidos y no ejecutados" loading="lazy">
+            <figcaption>Detalle del conjunto de SpiraTest.</figcaption>
+          </figure>
+          <figure class="screenshot">
+            <img src="images/detalle-test-spiratest.png" alt="TestSet SP19 en modo oscuro, con casos pasados, fallidos y no ejecutados" loading="lazy">
+            <figcaption>Detalle del test ejecutado para reportar en SpiraTest.</figcaption>
+          </figure>
+        </div>
+        <p>Los datos de las capturas corresponden al entorno de ejemplo y pueden variar.</p>
+        <div class="notice warning"><strong>Importante</strong>La selección solo está disponible para casos con automatización Playwright asociada. Completar una ejecución no la publica por sí solo; al terminar, puedes enviarla manualmente desde la pantalla de resultados.</div>
+      </section>
+
+      <section id="publicar">
+        <h2>Enviar resultados a SpiraTest</h2>
+        <p>Cuando una ejecución se inició desde un conjunto de SpiraTest, la pantalla de resultados ofrece la acción <strong>Reportar pruebas</strong> al finalizar.</p>
+        <ol class="steps">
+          <li>Espera a que la ejecución muestre el estado <strong>Finalizado</strong>.</li>
+          <li>Revisa los resultados y confirma que corresponden al conjunto de pruebas esperado.</li>
+          <li>Pulsa <strong>Reportar pruebas</strong> y espera la confirmación <strong>Reportado</strong>.</li>
+          <li>Si el envío falla, revisa la conexión y la configuración de SpiraTest, y consulta a la persona administradora antes de volver a intentarlo.</li>
+        </ol>
+        <div class="notice"><strong>Alcance del reporte</strong>El envío se ofrece para ejecuciones lanzadas desde SpiraTest y utiliza los casos seleccionados y sus resultados. Las ejecuciones directas desde el selector de Playwright no tienen asociado un conjunto al que reportar.</div>
       </section>
 
       <section id="estados">
@@ -244,10 +392,11 @@
           <li>El backend debe estar disponible en la URL configurada para la aplicación.</li>
           <li>Los screenshots, vídeos y traces dependen de que el backend sirva correctamente los archivos de evidencia.</li>
           <li>El visor de traces utiliza actualmente <code>http://localhost:9323/trace/index.html</code>; debe ser accesible desde el navegador.</li>
-          <li>La integración usa actualmente el proyecto SpiraTest con identificador <code>1</code>.</li>
-          <li>El Dashboard existe como pantalla inicial, pero todavía no muestra información funcional completa.</li>
+          <li>La integración necesita un proyecto SpiraTest configurado para el entorno. El identificador se proporciona mediante configuración y puede variar entre entornos.</li>
+          <li>El Dashboard existe como pantalla inicial, pero actualmente solo muestra el título y no ofrece métricas ni acciones.</li>
           <li>La barra de progreso de la ejecución contabiliza principalmente estados pasados y fallidos; otros estados pueden no incrementar el porcentaje.</li>
           <li>La actualización de resultados depende de los eventos en tiempo real del servidor.</li>
+          <li>La acción de reporte a SpiraTest solo está disponible para ejecuciones iniciadas desde un conjunto y una vez finalizadas.</li>
         </ul>
       </section>
 
@@ -265,7 +414,25 @@
         </table>
       </section>
 
-      <footer>ZeroApp · Documentación de usuario · Generada para la versión actual del frontend</footer>
+      <section id="mejoras">
+        <h2>Mejoras futuras</h2>
+        <p class="lead">Estas son oportunidades de evolución del proyecto, no funcionalidades disponibles actualmente.</p>
+        <table>
+          <thead><tr><th>Mejora propuesta</th><th>Beneficio para el usuario</th></tr></thead>
+          <tbody>
+            <tr><td>Dashboard con actividad y métricas</td><td>Ver ejecuciones recientes, tendencias de fallos y accesos rápidos desde la pantalla inicial.</td></tr>
+            <tr><td>Configuración de proyectos y entornos</td><td>Cambiar de proyecto SpiraTest y entorno sin depender de valores fijos por despliegue.</td></tr>
+            <tr><td>Historial y búsqueda de ejecuciones</td><td>Encontrar ejecuciones anteriores por fecha, suite, estado o caso y comparar resultados.</td></tr>
+            <tr><td>Seguimiento de conexión más resiliente</td><td>Recuperar actualizaciones en tiempo real tras una interrupción y mostrar claramente el estado de conexión.</td></tr>
+            <tr><td>Progreso y estados más completos</td><td>Contabilizar estados omitidos, interrumpidos y con timeout, y mostrar una estimación de avance más precisa.</td></tr>
+            <tr><td>Visor de evidencias integrado</td><td>Abrir screenshots, vídeos y traces sin depender de una dirección local fija.</td></tr>
+            <tr><td>Reporte con validación y reintento</td><td>Identificar qué casos no se pudieron enviar a SpiraTest y reintentar solo los fallidos.</td></tr>
+            <tr><td>Preferencias y ayuda dentro de la aplicación</td><td>Configurar opciones de visualización y consultar ayuda contextual durante los flujos principales.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer>ZeroApp · Guía de usuario del frontend, backend, ejecución Playwright e integración SpiraTest · Las funciones descritas corresponden al estado actual del proyecto</footer>
     </main>
   </div>
 </body>

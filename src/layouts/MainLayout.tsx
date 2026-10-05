@@ -179,7 +179,7 @@ export default function MainLayout() {
   }, [openDrawer]);
 
   return (
-    <main className="flex min-h-screen bg-white text-black/70 dark:bg-slate-800 dark:text-slate-100">
+    <main className="flex h-screen bg-white text-black/70 dark:bg-slate-800 dark:text-slate-100">
       <Sidebar open={open} openDrawer={openDrawer} />
       {openDrawer && (
         <SelectTests

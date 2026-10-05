@@ -39,6 +39,7 @@ export default function SpiraTestPage() {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSpiraTestCases([]);
     setSelectedPaths([]);
   }, [testSetId]);
@@ -83,7 +84,7 @@ export default function SpiraTestPage() {
         showButton={spiraTestCases.length > 0}
       />
       <div
-        className={`flex gap-3 p-3 transition-transform duration-300 ${loading ? "items-center justify-center" : "items-stretch"} h-screen`}
+        className={`flex gap-3 p-3 transition-transform duration-300 ${loading ? "items-center justify-center" : "items-stretch"} h-[calc(100vh-3.5rem)]`}
       >
         {loading ? (
           <Spinner
