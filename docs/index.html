@@ -160,7 +160,7 @@
       <nav aria-label="Tabla de contenidos">
         <a href="#inicio">Introducción</a>
         <a href="#alcance">Qué incluye ZeroApp</a>
-        <a href="#tecnologias">Herramientas y arquitectura</a>
+        <a href="#tecnologias">Herramientas</a>
         <a href="#preparacion">Preparación y acceso</a>
         <a href="#interfaz">Conocer la interfaz</a>
         <a href="#ejecucion">Ejecutar pruebas</a>
@@ -169,8 +169,6 @@
         <a href="#spiratest">Trabajar con SpiraTest</a>
         <a href="#publicar">Enviar resultados a SpiraTest</a>
         <a href="#estados">Estados y leyenda</a>
-        <a href="#requisitos">Requisitos y limitaciones</a>
-        <a href="#ayuda">Resolución de problemas</a>
         <a href="#mejoras">Mejoras futuras</a>
       </nav>
     </aside>
@@ -196,7 +194,7 @@
       </section>
 
       <section id="tecnologias">
-        <h2>Herramientas y arquitectura</h2>
+        <h2>Herramientas</h2>
         <p class="lead">ZeroApp combina una interfaz web, un servicio backend y un proyecto independiente de automatización Playwright. Cada parte tiene responsabilidades diferenciadas.</p>
         <div class="tech-stack">
           <article class="tech-layer">
@@ -225,15 +223,6 @@
           <article class="flow-step"><strong>Ejecución y eventos</strong><p>Playwright corre las pruebas; SSE comunica inicio y finalización.</p></article>
           <article class="flow-step"><strong>Resultados y reporte</strong><p>La interfaz presenta el reporte y permite publicarlo en SpiraTest.</p></article>
         </div>
-        <h3>Arquitectura y patrones</h3>
-        <div class="pattern-grid">
-          <article class="pattern-item"><strong>Cliente-servidor</strong><p>Frontend y backend separados, conectados mediante HTTP y SSE.</p></article>
-          <article class="pattern-item"><strong>Backend modular por capas</strong><p>Rutas, controladores y servicios organizados por dominio; las ejecuciones usan repositorio/almacenamiento.</p></article>
-          <article class="pattern-item"><strong>Componentes y estado compartido</strong><p>React divide la interfaz en piezas y Zustand mantiene el estado de ejecución entre vistas.</p></article>
-          <article class="pattern-item"><strong>Page Object Model</strong><p>Las páginas Playwright heredan de <code>BasePage</code> y encapsulan interacciones de UI.</p></article>
-          <article class="pattern-item"><strong>Fixtures y fábricas</strong><p>Recursos reutilizables para preparar contexto de prueba y generar datos.</p></article>
-        </div>
-        <div class="notice warning"><strong>Nota sobre dependencias</strong>Los manifiestos del backend también declaran Prisma, BullMQ y Redis (ioredis), pero no forman parte del flujo de ejecución descrito aquí: la ruta de ejecución observada usa el almacenamiento/repository configurado en el propio backend. Su presencia en las dependencias no implica por sí sola que las colas o la persistencia estén activas.</div>
       </section>
 
       <section id="preparacion">
@@ -382,34 +371,6 @@
             <tr><td><strong>Fallido</strong></td><td>Uno o más pasos no se completaron correctamente.</td><td>Revisar error, screenshot, trace y stack trace.</td></tr>
             <tr><td><strong>Omitido</strong></td><td>La prueba no se ejecutó.</td><td>Comprobar la configuración y las condiciones de ejecución.</td></tr>
             <tr><td><strong>Bloqueado</strong></td><td>El caso no puede avanzar por una dependencia o impedimento.</td><td>Resolver el bloqueo antes de volver a ejecutar.</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section id="requisitos">
-        <h2>Requisitos y limitaciones conocidas</h2>
-        <ul>
-          <li>El backend debe estar disponible en la URL configurada para la aplicación.</li>
-          <li>Los screenshots, vídeos y traces dependen de que el backend sirva correctamente los archivos de evidencia.</li>
-          <li>El visor de traces utiliza actualmente <code>http://localhost:9323/trace/index.html</code>; debe ser accesible desde el navegador.</li>
-          <li>La integración necesita un proyecto SpiraTest configurado para el entorno. El identificador se proporciona mediante configuración y puede variar entre entornos.</li>
-          <li>El Dashboard existe como pantalla inicial, pero actualmente solo muestra el título y no ofrece métricas ni acciones.</li>
-          <li>La barra de progreso de la ejecución contabiliza principalmente estados pasados y fallidos; otros estados pueden no incrementar el porcentaje.</li>
-          <li>La actualización de resultados depende de los eventos en tiempo real del servidor.</li>
-          <li>La acción de reporte a SpiraTest solo está disponible para ejecuciones iniciadas desde un conjunto y una vez finalizadas.</li>
-        </ul>
-      </section>
-
-      <section id="ayuda">
-        <h2>Resolución de problemas</h2>
-        <table>
-          <thead><tr><th>Situación</th><th>Comprobaciones recomendadas</th></tr></thead>
-          <tbody>
-            <tr><td>No aparecen suites o scripts</td><td>Verifica el backend, la URL configurada y pulsa <strong>Recargar suites</strong>.</td></tr>
-            <tr><td>La ejecución no avanza</td><td>Comprueba la conexión con el servidor y que la página siga abierta.</td></tr>
-            <tr><td>No se ve una evidencia</td><td>Confirma que el archivo existe y que el backend expone la ruta de archivos.</td></tr>
-            <tr><td>El trace no se abre</td><td>Verifica que el visor esté disponible en el puerto 9323 y que no esté bloqueado por la red.</td></tr>
-            <tr><td>No se puede seleccionar un caso SpiraTest</td><td>El caso necesita una correspondencia con una prueba automatizada de Playwright.</td></tr>
           </tbody>
         </table>
       </section>
