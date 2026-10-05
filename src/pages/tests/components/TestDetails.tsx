@@ -1,5 +1,5 @@
-import { Fragment, useState } from "react";
-import { CircleIcon, Clock, FolderOpen } from "lucide-react";
+import { Fragment, useRef, useState } from "react";
+import { CircleIcon, Clock, FolderOpen, ImagePlus, X } from "lucide-react";
 import { today } from "../../../utils/Utils";
 import Popup from "../../../components/ui/UiPopup";
 import type { TestResult } from "../../../types/test.type";
@@ -7,6 +7,14 @@ import { UiAccordion } from "../../../components/ui";
 import TraceCard from "../../../components/cards/TraceCard";
 import { useExecutionStore } from "../../../store/executionStore";
 // import type { PwExecution } from "../../../types/playwright";
+
+const allowedImageTypes = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/webp",
+  "image/bmp",
+]);
 
 interface TestDetailProps {
   test: TestResult;
@@ -19,6 +27,9 @@ const TestDetail = (props: TestDetailProps) => {
   const updateExecuteSpiraStatusStep = useExecutionStore(
     (state) => state.updateExecuteSpiraStatusStep,
   );
+  const updateExecuteSpiraStepImage = useExecutionStore(
+    (state) => state.updateExecuteSpiraStepImage,
+  );
   const executeSpira = useExecutionStore((state) => state.executeSpira);
   const testSpira = executeSpira.find(
     (spira) => spira.playwrightTestId === test.id,
@@ -28,6 +39,8 @@ const TestDetail = (props: TestDetailProps) => {
   const video = test.attachments.find((a) => a.name === "video");
   const [openImage, setOpenImage] = useState(false);
   const [openVideo, setOpenVideo] = useState(false);
+  const [imageError, setImageError] = useState("");
+  const imageInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const changeExecuteSpira = (value: string, stepIndex: number) => {
     updateExecuteSpiraStep(testSpira?.spiraTestCaseId || "", stepIndex, value);
@@ -39,6 +52,42 @@ const TestDetail = (props: TestDetailProps) => {
       stepIndex,
       newValue,
     );
+  };
+
+  const attachStepImage = (file: File | undefined, stepIndex: number) => {
+    if (!file || !testSpira) return;
+    setImageError("");
+    if (!allowedImageTypes.has(file.type)) {
+      setImageError("Selecciona un archivo de imagen.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError("La imagen no puede superar los 5 MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = String(reader.result);
+      updateExecuteSpiraStepImage(testSpira.spiraTestCaseId, stepIndex, {
+        fileName: file.name,
+        contentType: file.type,
+        data: dataUrl.slice(dataUrl.indexOf(",") + 1),
+      });
+    };
+    reader.onerror = () => setImageError("No se pudo leer la imagen.");
+    reader.readAsDataURL(file);
+  };
+
+  const removeStepImage = (stepIndex: number) => {
+    if (!testSpira) return;
+    updateExecuteSpiraStepImage(
+      testSpira.spiraTestCaseId,
+      stepIndex,
+      undefined,
+    );
+    const input = imageInputRefs.current[stepIndex];
+    if (input) input.value = "";
   };
 
   console.log("traceTest", traceTest);
@@ -138,6 +187,57 @@ const TestDetail = (props: TestDetailProps) => {
                           changeExecuteSpira(text.target.value, i)
                         }
                       />
+                      <div className="mt-2 flex items-center gap-3">
+                        <input
+                          ref={(element) => {
+                            imageInputRefs.current[i] = element;
+                          }}
+                          id={`step-image-${test.id}-${i}`}
+                          type="file"
+                          accept="image/png,image/jpeg,image/gif,image/webp,image/bmp"
+                          className="hidden"
+                          onChange={(event) =>
+                            attachStepImage(event.target.files?.[0], i)
+                          }
+                        />
+                        {executeDetail?.image ? (
+                          <>
+                            <img
+                              src={`data:${executeDetail.image.contentType};base64,${executeDetail.image.data}`}
+                              alt={`Adjunto para ${step.title}`}
+                              className="h-12 w-12 rounded border border-slate-400 object-cover"
+                            />
+                            <span className="min-w-0 flex-1 truncate text-sm">
+                              {executeDetail.image.fileName}
+                            </span>
+                            <button
+                              type="button"
+                              title="Quitar imagen"
+                              aria-label="Quitar imagen"
+                              onClick={() => removeStepImage(i)}
+                              className="rounded p-2 hover:bg-slate-300 dark:hover:bg-slate-700"
+                            >
+                              <X size={16} />
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            type="button"
+                            title="Adjuntar imagen"
+                            aria-label="Adjuntar imagen"
+                            onClick={() => imageInputRefs.current[i]?.click()}
+                            className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-slate-300 dark:hover:bg-slate-700"
+                          >
+                            <ImagePlus size={16} />
+                            Adjuntar imagen
+                          </button>
+                        )}
+                      </div>
+                      {imageError && (
+                        <p role="alert" className="mt-1 text-sm text-red-600">
+                          {imageError}
+                        </p>
+                      )}
                     </div>
                   )}
                 </Fragment>

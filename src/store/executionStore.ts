@@ -1,7 +1,7 @@
 
 import { create } from 'zustand';
 import type { TestResult } from '../types/test.type';
-import type { TestRunSummary as Summary, PwExecution, TestPW } from "../types/playwright";
+import type { TestRunSummary as Summary, PwExecution, PwStep, TestPW } from "../types/playwright";
 
 interface ExecutionStore {
   isFinishedStore: boolean,
@@ -28,6 +28,7 @@ interface ExecutionStore {
   setSpiraTestCases: (testCases: TestPW[]) => void;
   setSelectedTestSetId: (testSetId: number | null) => void;
   updateExecuteSpiraStep: (testCaseId: string, stepIndex: number, error: string) => void;
+  updateExecuteSpiraStepImage: (testCaseId: string, stepIndex: number, image: PwStep["image"]) => void;
   updateExecuteSpiraStatusStep: (testCaseId: string, stepIndex: number, status: string) => void;
   reset: ()=> void;
 }
@@ -88,6 +89,21 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
               ...execution,
               steps: execution.steps.map((step, index) =>
                 index === stepIndex ? { ...step, actualResult: result} : step,
+              ),
+            },
+      ),
+    })
+  ),
+
+  updateExecuteSpiraStepImage:(testCaseId, stepIndex, image) =>
+    set((state) => ({
+      executeSpira: state.executeSpira.map((execution) =>
+        execution.spiraTestCaseId !== testCaseId
+          ? execution
+          : {
+              ...execution,
+              steps: execution.steps.map((step, index) =>
+                index === stepIndex ? { ...step, image} : step,
               ),
             },
       ),

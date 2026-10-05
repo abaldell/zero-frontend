@@ -37,9 +37,16 @@ export interface PwExecution {
   steps: PwStep[];
 }
 
+export interface SpiraStepImage {
+  fileName: string;
+  contentType: string;
+  data: string;
+}
+
 export interface PwStep {
   name: string;
   status: string;
   actualResult: string;
   error?: string;
+  image?: SpiraStepImage;
 }
