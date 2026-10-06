@@ -1,12 +1,27 @@
 import { X } from "lucide-react";
+import { useEffect } from "react";
 
 export interface UiAlertProps {
   title: string;
   status: string;
+  isClosed: boolean;
   onClose: (close: boolean) => void;
 }
 const UiAlert = (props: UiAlertProps) => {
-  const { title, status, onClose } = props;
+  const { title, status, isClosed, onClose } = props;
+
+  const timeOutClose = () => {
+    setTimeout(() => {
+      onClose(false);
+    }, 5000);
+  };
+
+  useEffect(() => {
+    if (isClosed) {
+      timeOutClose();
+    }
+  }, [isClosed]);
+
   return (
     <div
       className={`absolute flex gap-3 items-center bottom-3 right-7 rounded-md p-3 w-fit ring-1 text-white ${status === "error" ? "bg-red-500/60 ring-red-300" : status === "success" ? "bg-green-500/60 ring-green-300" : "bg-green-500/60 ring-green-300"}`}

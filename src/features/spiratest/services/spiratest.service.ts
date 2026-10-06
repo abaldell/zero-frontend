@@ -45,7 +45,7 @@ export function reportTestExecutions(
     testSetId: number | null,
     executions: PwExecution[],
 ) {
-    const spiraExecutions = executions.map(({ playwrightTestId: _playwrightTestId, ...execution }) => execution);
+    const spiraExecutions = executions.map(({ ...execution }) => execution);
     return api.post(`${urlApi}/test-runs/${projectId}`, {
         testSetId,
         executions: spiraExecutions,
