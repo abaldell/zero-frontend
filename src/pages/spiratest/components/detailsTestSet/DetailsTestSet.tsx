@@ -75,14 +75,14 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
       loadData();
     }
   }, [testSelected]);
-
+  console.log("details", details);
   return (
     <div className={`${loading ? "flex items-center justify-center" : ""}`}>
       {loading ? (
         <Spinner color="info" aria-label="Extra large Info spinner" size="xl" />
       ) : (
         <>
-          <div className="sticky top-0 left-0 flex items-center justify-between bg-slate-900 z-40 p-3">
+          <div className="sticky top-0 left-0 flex items-center justify-between bg-slate-100 dark:bg-slate-900 z-40 p-3">
             <div>
               <h1 className="text-xl font-bold">{details.Name}</h1>
             </div>
