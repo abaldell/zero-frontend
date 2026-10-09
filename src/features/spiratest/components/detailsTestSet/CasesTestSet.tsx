@@ -101,11 +101,9 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
                       </span>
                     </div>
 
-                    <h3 className="text-sm font-semibold">
-                      [TC:{item.TestCaseId}] {item.Name}
-                    </h3>
+                    <h3 className="text-sm font-semibold">{item.Name}</h3>
                   </div>
-                  <div className="flex">
+                  <div className="flex w-32">
                     <h3 className="text-sm font-semibold">
                       Ultima ejecución: {lastDate}
                     </h3>

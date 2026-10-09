@@ -24,9 +24,10 @@ interface ExecutionStore {
   setTotalExecutions:(total:number) => void;
   setSummaryExecutions:(summary:Summary) => void;
   setResultTestExecutions:(tests:Record<string, TestResult[]>) => void
-  setExecuteSpira: (executeSpira: PwExecution[]) => void;
+  setExecuteSpira: (executeSpira: PwExecution[] | ((prev: PwExecution[]) => PwExecution[])) => void;
   setSpiraTestCases: (testCases: TestPW[]) => void;
   setSelectedTestSetId: (testSetId: number | null) => void;
+  beginExecution: () => void;
   updateExecuteSpiraStep: (testCaseId: string, stepIndex: number, error: string) => void;
   updateExecuteSpiraStepImage: (testCaseId: string, stepIndex: number, image: PwStep["image"]) => void;
   updateExecuteSpiraStatusStep: (testCaseId: string, stepIndex: number, status: string) => void;
@@ -72,7 +73,12 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
     set({resultTestStore: tests}),
 
   setExecuteSpira:(executeSpira) =>
-    set({ executeSpira }),
+    set((state) => ({
+      executeSpira:
+        typeof executeSpira === "function"
+          ? executeSpira(state.executeSpira)
+          : executeSpira,
+    })),
 
   setSpiraTestCases:(spiraTestCases) =>
     set({ spiraTestCases }),
@@ -80,20 +86,41 @@ export const useExecutionStore = create<ExecutionStore>(set => ({
   setSelectedTestSetId:(selectedTestSetId) =>
     set({ selectedTestSetId }),
 
+  beginExecution: () =>
+    set({
+      isFinishedStore: false,
+      isLoadingStore: true,
+      totalTestsStore: 0,
+      summaryStore: {} as Summary,
+      durationStore: 0,
+      progressStore: 0,
+      testsStore: [],
+      resultTestStore: {},
+      executeSpira: [],
+    }),
+
   updateExecuteSpiraStep:(testCaseId, stepIndex, result) =>
-    set((state) => ({
-      executeSpira: state.executeSpira.map((execution) =>
-        execution.spiraTestCaseId !== testCaseId
-          ? execution
-          : {
-              ...execution,
-              steps: execution.steps.map((step, index) =>
-                index === stepIndex ? { ...step, actualResult: result} : step,
-              ),
-            },
-      ),
-    })
-  ),
+    set((state) => {
+      const execution = state.executeSpira.find(
+        (item) => item.spiraTestCaseId === testCaseId,
+      );
+      if (!execution || execution.steps[stepIndex]?.actualResult === result) {
+        return state;
+      }
+
+      return {
+        executeSpira: state.executeSpira.map((item) =>
+          item.spiraTestCaseId !== testCaseId
+            ? item
+            : {
+                ...item,
+                steps: item.steps.map((step, index) =>
+                  index === stepIndex ? { ...step, actualResult: result } : step,
+                ),
+              },
+        ),
+      };
+    }),
 
   updateExecuteSpiraStepImage:(testCaseId, stepIndex, image) =>
     set((state) => ({

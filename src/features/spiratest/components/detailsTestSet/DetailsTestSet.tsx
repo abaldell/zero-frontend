@@ -28,6 +28,7 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
   useEffect(() => {
     if (testSelected) {
       const loadData = async () => {
+        setLoading(true);
         try {
           const data = await getDetailTestSet(
             import.meta.env.VITE_API_PROYECT,

@@ -24,6 +24,7 @@ export function useExecutionFlow() {
   const setTestExecutions = useExecutionStore((state) => state.setTestExecutions);
   const setSummary = useExecutionStore((state) => state.setSummaryExecutions);
   const setResults = useExecutionStore((state) => state.setResultTestExecutions);
+  const beginExecution = useExecutionStore((state) => state.beginExecution);
   const [tests, setTests] = useState<TestResult[]>([]);
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
   const [selectedScriptKeys, setSelectedScriptKeys] = useState<string[]>([]);
@@ -32,9 +33,7 @@ export function useExecutionFlow() {
     onMessage: (message) => {
       if (message.type === "execution-started") {
         setTests([]);
-        setTestExecutions([]);
-        setFinished(false);
-        setLoading(true);
+        beginExecution();
       }
 
       if (message.totalTest) {
@@ -121,6 +120,7 @@ export function useExecutionFlow() {
 
   const runTests = async () => {
     setTests([]);
+    beginExecution();
     navigate("/tests");
 
     try {

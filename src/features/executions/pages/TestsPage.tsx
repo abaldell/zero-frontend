@@ -95,7 +95,38 @@ export default function TestsPage(props: TestsPageProps) {
         )
       : [];
 
-    setExecuteSpira(executions);
+    setExecuteSpira((current) => {
+      const previousByCase = new Map(
+        current.map((execution) => [execution.spiraTestCaseId, execution]),
+      );
+
+      return executions.map((execution) => {
+        const previousExecution = previousByCase.get(execution.spiraTestCaseId);
+        if (!previousExecution) return execution;
+
+        return {
+          ...execution,
+          steps: execution.steps.map((step, stepIndex) => {
+            const previousStep = previousExecution.steps[stepIndex];
+            if (!previousStep) return step;
+
+            return {
+              ...step,
+              actualResult:
+                previousStep.actualResult !== undefined
+                  ? previousStep.actualResult
+                  : step.actualResult,
+              status:
+                previousStep.status !== undefined
+                  ? previousStep.status
+                  : step.status,
+              image: previousStep.image ?? step.image,
+              error: previousStep.error ?? step.error,
+            };
+          }),
+        };
+      });
+    });
   }, [isExecution, resultTestStore, setExecuteSpira, spiraTestCases]);
 
   const reportExecutions = async () => {
@@ -162,12 +193,12 @@ export default function TestsPage(props: TestsPageProps) {
           (isFinishedNotification ||
             reportState === "success" ||
             reportState === "error") && (
-          <UiAlert
-            isClosed={closeAlert}
-            title={isFinishedNotification ? "Test ejecutados" : alertMessage}
-            status={isFinishedNotification ? "success" : alertStatus}
-            onClose={setCloseAlert}
-          />
+            <UiAlert
+              isClosed={closeAlert}
+              title={isFinishedNotification ? "Test ejecutados" : alertMessage}
+              status={isFinishedNotification ? "success" : alertStatus}
+              onClose={setCloseAlert}
+            />
           )}
       </section>
     </div>
