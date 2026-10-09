@@ -78,7 +78,9 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
     }
   }, [testSelected]);
   return (
-    <div className={`${loading ? "flex items-center justify-center" : ""}`}>
+    <div
+      className={`${loading ? "flex items-center justify-center min-h-[calc(100vh-7rem)]" : ""}`}
+    >
       {loading ? (
         <Spinner color="info" aria-label="Extra large Info spinner" size="xl" />
       ) : (

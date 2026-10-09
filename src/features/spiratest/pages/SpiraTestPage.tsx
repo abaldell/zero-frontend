@@ -105,7 +105,7 @@ export default function SpiraTestPage() {
             </div>
 
             <div
-              className={`${testSetId ? "flex justify-center w-3/4 items-center" : "w-full"} custom-scroll overflow-x-hidden overflow-y-auto dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900 transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 pt-0 rounded-md`}
+              className={`${testSetId ? "w-3/4 items-center" : "w-full"} custom-scroll overflow-x-hidden overflow-y-auto dark:scrollbar-thumb-teal-500 dark:scrollbar-track-slate-900 transition-transform duration-300 bg-slate-100 dark:bg-slate-900 p-3 pt-0 rounded-md`}
             >
               {testSetId ? (
                 <DetailsTestSet
