@@ -15,12 +15,14 @@ interface CasesTestSetProps {
 export const CasesTestSet = (props: CasesTestSetProps) => {
   const { casesTest, testPW, onSelectTestCase, onSelectPaths } = props;
   const [selectedCases, setSelectedCases] = useState<TestPW[]>([]);
+  const testPWById = new Map(testPW.map((test) => [test.id, test]));
+  const selectedCaseIds = new Set(selectedCases.map((test) => test.id));
 
   const changeSelectedCases = (testCaseId: number) => {
-    const selectedCase = testPW.find((item) => item.id === testCaseId);
+    const selectedCase = testPWById.get(testCaseId);
     if (!selectedCase) return;
 
-    const isSelected = selectedCases.some((item) => item.id === testCaseId);
+    const isSelected = selectedCaseIds.has(testCaseId);
     const nextSelectedCases = isSelected
       ? selectedCases.filter((item) => item.id !== testCaseId)
       : [...selectedCases, selectedCase];
@@ -40,12 +42,7 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
       <ul role="list" className="divide-y divide-slate-700/50">
         {casesTest.map((item: CaseTestSet) => {
           const lastDate = formatDate(item.LastUpdateDate);
-          const isEnabled =
-            testPW.length > 0
-              ? testPW.find((test) => test.id === item.TestCaseId)
-                ? true
-                : false
-              : false;
+          const isEnabled = testPWById.has(item.TestCaseId);
           return (
             <li
               key={`case-${item.TestCaseId}`}
@@ -59,9 +56,7 @@ export const CasesTestSet = (props: CasesTestSetProps) => {
                         id={`${item.TestCaseId}`}
                         className={`disabled:bg-slate-300 dark:disabled:bg-slate-400 dark:disabled:border-slate-700 disabled:border-slate-900 border-teal-500 bg-teal-50 text-teal-500 placeholder-teal-700 focus:border-0 focus:ring-0 dark:border-teal-400 dark:bg-teal-100 dark:focus:border-0 dark:focus:ring-0`}
                         disabled={!isEnabled}
-                        checked={selectedCases.some(
-                          (sc) => sc.id === item.TestCaseId,
-                        )}
+                        checked={selectedCaseIds.has(item.TestCaseId)}
                         onChange={() => changeSelectedCases(item.TestCaseId)}
                       />
                     </div>
