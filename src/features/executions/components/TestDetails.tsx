@@ -42,7 +42,8 @@ const TestDetail = (props: TestDetailProps) => {
   const imageInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const changeExecuteSpira = (value: string, stepIndex: number) => {
-    updateExecuteSpiraStep(testSpira?.spiraTestCaseId || "", stepIndex, value);
+    if (!testSpira) return;
+    updateExecuteSpiraStep(testSpira.spiraTestCaseId, stepIndex, value);
   };
 
   const changeStatusStep = (newValue: string, stepIndex: number) => {
@@ -88,8 +89,6 @@ const TestDetail = (props: TestDetailProps) => {
     const input = imageInputRefs.current[stepIndex];
     if (input) input.value = "";
   };
-
-  console.log("traceTest", traceTest);
 
   return (
     <div className=" text-black/70 dark:text-white">
@@ -152,9 +151,7 @@ const TestDetail = (props: TestDetailProps) => {
         <div className="my-3">
           {test.steps &&
             test.steps.map((step, i) => {
-              const executeDetail = testSpira?.steps?.find(
-                (spira) => spira.name === step.title,
-              );
+              const executeDetail = testSpira?.steps?.[i];
               return (
                 <Fragment key={`${test.id}-${i}`}>
                   <UiAccordion step={step} level={0} />

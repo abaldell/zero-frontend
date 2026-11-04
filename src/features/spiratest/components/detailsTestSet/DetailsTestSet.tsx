@@ -27,17 +27,16 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
 
   useEffect(() => {
     if (testSelected) {
+      let cancelled = false;
       const loadData = async () => {
+        setLoading(true);
         try {
-          const data = await getDetailTestSet(
-            import.meta.env.VITE_API_PROYECT,
-            testSelected,
-          );
-          const dataCases = await getCasesTestSet(
-            import.meta.env.VITE_API_PROYECT,
-            testSelected,
-          );
-          const dataTestPW = await getTestPW();
+          const [data, dataCases, dataTestPW] = await Promise.all([
+            getDetailTestSet(import.meta.env.VITE_API_PROYECT, testSelected),
+            getCasesTestSet(import.meta.env.VITE_API_PROYECT, testSelected),
+            getTestPW(),
+          ]);
+          if (cancelled) return;
 
           setDetails(data);
           setCasesTest(dataCases);
@@ -69,15 +68,19 @@ export const DetailsTestSet = (props: DetailsTestSetProps) => {
             ],
           });
         } finally {
-          setLoading(false);
+          if (!cancelled) setLoading(false);
         }
       };
       loadData();
+      return () => {
+        cancelled = true;
+      };
     }
   }, [testSelected]);
-  console.log("details", details);
   return (
-    <div className={`${loading ? "flex items-center justify-center" : ""}`}>
+    <div
+      className={`${loading ? "flex items-center justify-center min-h-[calc(100vh-7rem)]" : ""}`}
+    >
       {loading ? (
         <Spinner color="info" aria-label="Extra large Info spinner" size="xl" />
       ) : (

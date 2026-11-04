@@ -34,8 +34,10 @@ export default function TestsPage(props: TestsPageProps) {
   const durationStore = useExecutionStore((state) => state.durationStore);
   const progressStore = useExecutionStore((state) => state.progressStore);
   const [reportState, setReportState] = useState<TestStatusReport>("idle");
-  const [reportError, setReportError] = useState("");
+  const [alertStatus, setAlertStatus] = useState<TestStatusReport>("success");
+  const [alertMessage, setAlertMessage] = useState("");
   const [closeAlert, setCloseAlert] = useState<boolean>(true);
+  const isFinishedNotification = isFinishedStore && reportState === "idle";
   const hasTests =
     testsStore.length > 0 || Object.keys(resultTestStore).length > 0;
 
@@ -93,12 +95,42 @@ export default function TestsPage(props: TestsPageProps) {
         )
       : [];
 
-    setExecuteSpira(executions);
+    setExecuteSpira((current) => {
+      const previousByCase = new Map(
+        current.map((execution) => [execution.spiraTestCaseId, execution]),
+      );
+
+      return executions.map((execution) => {
+        const previousExecution = previousByCase.get(execution.spiraTestCaseId);
+        if (!previousExecution) return execution;
+
+        return {
+          ...execution,
+          steps: execution.steps.map((step, stepIndex) => {
+            const previousStep = previousExecution.steps[stepIndex];
+            if (!previousStep) return step;
+
+            return {
+              ...step,
+              actualResult:
+                previousStep.actualResult !== undefined
+                  ? previousStep.actualResult
+                  : step.actualResult,
+              status:
+                previousStep.status !== undefined
+                  ? previousStep.status
+                  : step.status,
+              image: previousStep.image ?? step.image,
+              error: previousStep.error ?? step.error,
+            };
+          }),
+        };
+      });
+    });
   }, [isExecution, resultTestStore, setExecuteSpira, spiraTestCases]);
 
   const reportExecutions = async () => {
     setReportState("loading");
-    setReportError("");
     try {
       await reportTestExecutions(
         Number(import.meta.env.VITE_API_PROYECT),
@@ -106,12 +138,16 @@ export default function TestsPage(props: TestsPageProps) {
         executeSpira,
       );
       setReportState("success");
+      setAlertStatus("success");
+      setAlertMessage("Pruebas reportadas correctamente.");
+      setCloseAlert(true);
     } catch (error) {
-      setReportError(
+      setAlertMessage(
         error instanceof Error
           ? error.message
           : "No se pudieron reportar las pruebas.",
       );
+      setAlertStatus("error");
       setCloseAlert(true);
       setReportState("error");
     }
@@ -153,13 +189,17 @@ export default function TestsPage(props: TestsPageProps) {
             <ReportTestList items={testsStore} itemsResult={resultTestStore} />
           )}
         </div>
-        {reportState && closeAlert && (
-          <UiAlert
-            title={reportError}
-            status={reportState}
-            onClose={setCloseAlert}
-          />
-        )}
+        {closeAlert &&
+          (isFinishedNotification ||
+            reportState === "success" ||
+            reportState === "error") && (
+            <UiAlert
+              isClosed={closeAlert}
+              title={isFinishedNotification ? "Test ejecutados" : alertMessage}
+              status={isFinishedNotification ? "success" : alertStatus}
+              onClose={setCloseAlert}
+            />
+          )}
       </section>
     </div>
   );
